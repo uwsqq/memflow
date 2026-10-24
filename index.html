@@ -96,10 +96,14 @@ h1{font-size:27px;margin-bottom:6px}h2{font-size:20px}.sub{color:var(--muted);fo
 .turbo-bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:12px}
 .turbo-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--bad),var(--hard),var(--good));width:100%}
 .ratebtns{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.ratebtns button{padding:12px 6px;border-radius:13px;font-weight:700;font-size:13px;color:#fff;display:flex;flex-direction:column;gap:2px;align-items:center;transition:transform .12s var(--ease)}
+.ratebtns button{padding:12px 6px;border-radius:13px;font-weight:700;font-size:13px;color:#fff;display:flex;flex-direction:column;gap:2px;align-items:center;transition:transform .12s var(--ease);position:relative}
 .ratebtns button small{font-weight:500;opacity:.85;font-size:11px}
 .ratebtns button:hover{transform:translateY(-3px)}
-.r-again{background:var(--bad)}.r-hard{background:var(--hard)}.r-good{background:var(--good)}.r-easy{background:var(--easy)}
+/* v4.9 Anki-стиль: цифровой хоткей в углу кнопки, Good — выделен */
+.ratebtns button::after{content:attr(data-key);position:absolute;top:5px;right:7px;font-size:10px;opacity:.55;font-weight:800}
+.r-again{background:var(--bad)}.r-hard{background:var(--hard)}.r-easy{background:var(--easy)}
+.r-good{background:var(--good);box-shadow:0 0 0 2px #fff3 inset,0 6px 22px color-mix(in srgb,var(--good) 45%,transparent);transform:scale(1.04)}
+.r-good:hover{transform:scale(1.04) translateY(-3px)}
 .showbtn{width:100%;padding:14px;border-radius:13px;background:var(--grad);color:#fff;font-size:16px;font-weight:700;margin-bottom:18px}
 .emptyrev{text-align:center;padding:60px 20px;color:var(--muted)}
 .emptyrev .emo{font-size:52px;margin-bottom:12px}
@@ -218,6 +222,28 @@ kbd{background:var(--card2);border:1px solid var(--line);border-radius:6px;paddi
 .bigbtn:active{transform:scale(.96)}
 #toast{transition-timing-function:cubic-bezier(.34,1.56,.64,1)}
 /* ===== v4.8: drag&drop-импорт + Анки-каталог ===== */
+/* ===== v4.9: дизайн-слой — aurora-фон, стекло, глубина, tilt ===== */
+body::before{content:'';position:fixed;inset:-22%;z-index:-1;pointer-events:none;background:
+ radial-gradient(42% 32% at 18% 12%,rgba(108,92,231,.22),transparent 70%),
+ radial-gradient(36% 30% at 82% 8%,rgba(0,210,198,.16),transparent 70%),
+ radial-gradient(46% 36% at 64% 88%,rgba(225,112,85,.10),transparent 70%);
+ filter:blur(46px);animation:aurora 26s ease-in-out infinite alternate}
+@keyframes aurora{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-3%,2%,0) scale(1.07)}100%{transform:translate3d(2%,-3%,0) scale(1.02)}}
+body.light::before{opacity:.55}
+nav{background:color-mix(in srgb,var(--bg) 76%,transparent)}
+.panel,.deck,.feature,.reccard,.libcard,.gamezone{background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
+.deck,.libcard{transform-style:preserve-3d;will-change:transform}
+.deck:hover{transform:perspective(900px) rotateX(1.4deg) rotateY(-1.6deg) translateY(-5px);box-shadow:0 18px 46px rgba(0,0,0,.38);border-color:var(--acc)}
+.libcard:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.32);border-color:var(--acc)}
+.hero h1{animation:heroIn 1s var(--mfm-soft) both}
+@keyframes heroIn{from{opacity:0;letter-spacing:.14em;filter:blur(10px)}to{opacity:1;letter-spacing:normal;filter:blur(0)}}
+.flashcard{box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.stat b{font-variant-numeric:tabular-nums}
+/* v4.9: звезда карточки */
+.starbtn{position:absolute;top:13px;left:16px;font-size:19px;background:none;opacity:.45;filter:grayscale(1);transition:.2s;z-index:2}
+.starbtn:hover{opacity:.9;transform:scale(1.15)}
+.starbtn.on{opacity:1;filter:none;color:#f1c40f}
+.starfilter{background:rgba(241,196,15,.12);border-color:#f1c40f;color:#f1c40f}
 #dropOverlay{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(5,7,14,.72);backdrop-filter:blur(10px);-moz-backdrop-filter:blur(10px);pointer-events:none}
 #dropOverlay.show{display:flex}
 #dropOverlay .dz{border:2.5px dashed var(--acc2);border-radius:24px;padding:46px 64px;font-size:22px;font-weight:800;color:var(--acc2);background:rgba(108,92,231,.08);animation:pop .3s var(--ease);text-align:center}
@@ -659,6 +685,10 @@ f6t:"ИИ-API",f6d:"Вставь свой ключ (OpenAI-совместимы�
 rec_h:"💡 Рекомендации для тебя",rec_why:"потому что ты учишь «{d}»",rec_new:"новое для тебя",
 wk_h:"📈 Твоя неделя",wk_total:"Всего за неделю: <b>{n}</b> · цель/день: {g}",
 qe_title:"✏️ Редактировать карточку (E)",qe_saved:"Карточка обновлена ✓",
+leech_tag:"Карточка помечена «трудная» — вернись к ней чаще",
+star_only:"⭐ Избранные",
+g3_best:"Рекорд: {n} сек · {m} ходов",
+t_all:"Все состояния",
 trash_h:"🗑 Корзина",trash_left:"авто-удаление через {n} дн.",trash_restore:"↩️ Восстановить",deck_restored:"Колода восстановлена ✓",
 grade_set:"Класс: {n} ✓",set_grade:"🎓 Класс",set_grade_d:"Библиотека покажет колоды твоего класса + все ОГЭ",set_grade_all:"Все классы",
 anki_h:"🅰️ Колоды Anki",anki_d:"Скачай .apkg с AnkiWeb и перетащи файл прямо на страницу — импортирую автоматически. Колода сразу появится в приложении.",anki_open:"Открыть AnkiWeb",anki_subj:"Поиск по предмету:",
@@ -672,6 +702,7 @@ ph_search:"🔍 Поиск по всем карточкам…",ph_libsearch:"�
 lib_h1:"📚 Библиотека",lib_sub:"Предметы, ОГЭ, языки, генераторы. Плюс внешний каталог по URL (GitHub-совместимо).",
 lib_store:"🌐 Каталог по URL",
 rv_left:"Осталось: <b id='revLeft'>0</b>",rv_streak:"Серия: <b id='streak'>🔥 0</b>",rv_sess:"Сессия: <b id='sessDone'>0</b>",
+btn_again:"Again",btn_hard:"Hard",btn_good:"Good",btn_easy:"Easy",
 games_h1:"🎮 Игры",games_sub:"Разминка для мозга и сброс напряжения.",
 g1_h:"⚔️ Дуэль памяти с ботом",g1_d:"Кто первый вспомнит правильный ответ — ты или бот? Бот тоже ошибается.",
 g1_start:"Начать дуэль",g1_round:"Раунд {n}/10",g1_win:"🎉 Ты победил!",g1_lose:"🤖 Бот выиграл",g1_tie:"🤝 Ничья",g1_botthink:"🤖 Бот думает…",g1_botwin:"🤖 Бот ответил первым!",
@@ -771,6 +802,10 @@ f6t:"AI API",f6d:"Paste your own key (OpenAI-compatible) — decks generated rig
 rec_h:"💡 Recommended for you",rec_why:"because you study “{d}”",rec_new:"new for you",
 wk_h:"📈 Your week",wk_total:"This week: <b>{n}</b> · daily goal: {g}",
 qe_title:"✏️ Edit card (E)",qe_saved:"Card updated ✓",
+leech_tag:"Card tagged as “leech” — review it more often",
+star_only:"⭐ Starred",
+g3_best:"Best: {n} s · {m} moves",
+t_all:"All states",
 trash_h:"🗑 Trash",trash_left:"auto-deleted in {n} d",trash_restore:"↩️ Restore",deck_restored:"Deck restored ✓",
 grade_set:"Grade: {n} ✓",set_grade:"🎓 Grade",set_grade_d:"The library shows your grade's decks + all exams",set_grade_all:"All grades",
 anki_h:"🅰️ Anki decks",anki_d:"Download an .apkg from AnkiWeb and drag the file right onto the page — it imports automatically. The deck appears in the app instantly.",anki_open:"Open AnkiWeb",anki_subj:"Search by subject:",
@@ -784,6 +819,7 @@ ph_search:"🔍 Search all cards…",ph_libsearch:"🔍 Filter library…",
 lib_h1:"📚 Library",lib_sub:"Subjects, exams, languages, generators. Plus external catalogs via URL (GitHub-compatible).",
 lib_store:"🌐 Catalog by URL",
 rv_left:"Left: <b id='revLeft'>0</b>",rv_streak:"Streak: <b id='streak'>🔥 0</b>",rv_sess:"Session: <b id='sessDone'>0</b>",
+btn_again:"Again",btn_hard:"Hard",btn_good:"Good",btn_easy:"Easy",
 games_h1:"🎮 Games",games_sub:"Brain warm-up and stress relief.",
 g1_h:"⚔️ Memory duel vs bot",g1_d:"Who recalls the right answer first — you or the bot? The bot makes mistakes too.",
 g1_start:"Start duel",g1_round:"Round {n}/10",g1_win:"🎉 You win!",g1_lose:"🤖 Bot wins",g1_tie:"🤝 Tie",g1_botthink:"🤖 Bot is thinking…",g1_botwin:"🤖 Bot answered first!",
@@ -900,6 +936,19 @@ done_h:"सेशन पूरा!",alldone_h:"आज सब हो गया",g
 g1_start:"ड्यूल शुरू करें",g2_start:"शुरू करें",btn_close:"बंद करें",btn_cancel:"रद्द करें",
 cm_save:"💾 सहेजें",dm_create:"बनाएँ",conf_del:"हटाएँ"
 });
+const I18N_X={
+es:{ach_h3:"🏆 Logros",addcard:"＋ Tarjeta",again_again:"Vuelve en un minuto",age_saved:"Guardado",ai_bad:"No pude leer el JSON",ai_copy:"📋 Copiar prompt",ai_direct:"⚡ Generar aquí",ai_err:"API inaccesible — revisa clave/endpoint o usa el prompt",ai_gen:"Generando…",ai_h2:"🤖 Mazo IA",ai_import:"💾 Importar",ai_ok:"Mazo IA listo 🤖",ai_p1:"Generación directa (clave API en ajustes) o por chat.",ai_paste:"JSON de la IA",ai_topic:"Tema",alldone_p:"No hay tarjetas pendientes.",alltag:"instalar un mazo de la biblioteca",anim_off:"Animaciones off",anim_on:"Animaciones on",anki_d:"Descarga un .apkg de AnkiWeb y arrastra el archivo a la página — se importa solo. El mazo aparece al instante.",anki_h:"🅰️ Mazos Anki",anki_ok:"Importado: {n} → «{d}»",anki_open:"Abrir AnkiWeb",anki_sched:"Horarios migrados: {n}",anki_subj:"Buscar por asignatura:",apkg_err:"No pude leer el .apkg — se necesita internet para la librería. Usa .txt.",apkg_load:"Cargando librería .apkg…",back:"← A mazos",bk_bad:"Copia inválida",bk_loaded:"Restaurado ✅",bk_ok:"Copia descargada 💾",brain_h3:"🎂 Edad cerebral",card_del:"Tarjeta borrada",card_saved:"Guardado ✅",cm_back:"Respuesta",cm_front:"Pregunta",cm_h:"Tarjeta",cm_img:"URL de imagen",cm_t1:"Básica",cm_t2:"Escribir respuesta",cm_tags:"Etiquetas",cm_type:"Tipo",conf_h:"¿Seguro?",confirm_all:"Se borrará todo.",cram:"usar repaso intensivo",cram_on:"⚡ Repaso intensivo: el progreso no cambia",curve_goal:"meta",curve_h3:"📉 Curva de fuerza de memoria (tuya)",curve_hint_fit:"La línea amarilla se construye con tus {n} repeticiones: cómo retiene tu memoria de verdad.",curve_hint_no:"Aún no hay datos suficientes ({n}). Tras ~20 repeticiones verás aquí tu curva personal.",curve_l1:"débil",curve_l2:"media",curve_l3:"madura",curve_yours:"tuya",d:"d",d_due:"pendientes",d_mature:"maduras",d_new:"nuevas",d_reps:"repeticiones",d_ret:"retención",d_rot2:"en rotación",dd_hint:"📥 Suelta el archivo — lo importo",deck_created:"Mazo creado 🎉",deck_del:"Mazo borrado",deck_restored:"Mazo restaurado ✓",decks_sub:"Crea, importa (Anki .apkg/.txt/.json, URL de GitHub), toma de la biblioteca.",demo_desc:"Ejemplo",demo_name:"🎓 Demo: memoria",dm_desc:"Descripción",dm_h:"Nuevo mazo",dm_name:"Nombre",done_p:"Repasadas: {n}. +{xp} XP 🧠",duel:"vence al bot",en:"inglés",enter_name:"Escribe un nombre",es:"español",ex_again:"🎲 Otro intento",ex_g2:"Hay que repasar — nota 2 💪",ex_g3:"Suficiente — nota 3",ex_g4:"Bien — nota 4 👍",ex_g5:"¡Excelente — nota 5! 🏆",ex_h:"📝 Examen de prueba",ex_reset:"🗑 Borrar todo",ex_score:"Nota: {n} de {m}",exam_btn:"📝 Examen de prueba",exam_left:"Quedan {n} días",exam_set:"Fecha límite {d}: intervalos ×{k}",exp_ok:"Exportado 👍",f1d:"El algoritmo se ajusta a tu memoria según tu historial.",f1t:"FSRS + optimizador",f2d:"Derecha = Bien, izquierda = Otra vez, arriba = Fácil, abajo = Difícil.",f2t:"Deslizamientos",f3d:"Micro-sesiones de 5 tarjetas con temporizador de 7 s y XP combo — modo clip.",f3t:"Modo turbo",f4d:"Un duelo de memoria con un bot y burbujas antiestrés.",f4t:"Minijuegos",f5d:"De noche los intervalos se suavizan — el sueño consolida la memoria (Rasch & Born, 2013).",f5t:"Sueño-aware",f6d:"Pega tu propia clave (compatible OpenAI) — mazos generados en el propio sitio.",f6t:"API de IA",fc_h3:"📅 Previsión de carga (7 días)",fill:"Rellena ambas caras",first:"1.ª repetición",fsrs_info:"Entrenado con {n} repeticiones",fsrs_new:"Sin datos — parámetros por defecto",g1_botthink:"🤖 El bot está pensando…",g1_botwin:"🤖 ¡El bot respondió primero!",g1_d:"¿Quién recuerda la respuesta primero — tú o el bot? El bot también se equivoca.",g1_h:"⚔️ Duelo de memoria vs bot",g1_lose:"🤖 Gana el bot",g1_round:"Ronda {n}/10",g1_tie:"🤝 Empate",g1_win:"🎉 ¡Ganaste!",g2_d:"Explota burbujas durante 30 segundos. Simple y meditativo.",g2_h:"🫧 Antiestrés: burbujas",g2_score:"Explotadas: {n}",g3_d:"Preguntas y respuestas mezcladas — encuentra todas las parejas de tus mazos.",g3_h:"🧩 Encuentra la pareja",g3_moves:"Movimientos: <b>{n}</b>",g3_pairs:"Parejas: {n}/{m}",g3_start:"Empezar juego",g3_time:"Tiempo: {n} s",g3_win:"🎉 ¡Todas las parejas!",games_sub:"Calentamiento cerebral y alivio del estrés.",grade_set:"Curso: {n} ✓",h:"h",hap_off:"Vibración off",hap_on:"Vibración on",heat_h3:"🔥 Actividad del año",hero_p:"Un algoritmo FSRS que aprende de tus respuestas. Deslizamientos estilo Tinder, modo turbo, minijuegos, IA, biblioteca de mazos y 5 idiomas. Gratis y sin conexión.",hi:"हिन्दी",hint:"espacio — revelar",hint_letter:"pista",hub_btn:"☁️ Mazos de la comunidad",hundred:"100 repeticiones",imp_ai:"🤖 Mazo IA",imp_empty:"Archivo no reconocido",imp_export:"⬇ Anki txt",imp_file:"📥 Importar archivo",imp_text:"✂️ Desde texto",inter_off:"🧩 Intercalado off",inter_on:"🧩 Intercalado on",keys_hint:"H — pista · F — enfoque · Z — deshacer · Ctrl+K — comandos",language:"+LN+",lib_added:"«{d}» añadido 📚",lib_h1:"📚 Biblioteca",lib_have:"✓ Instalado",lib_store:"🌐 Catálogo por URL",lib_sub:"Asignaturas, exámenes, idiomas, generadores. Además catálogos externos por URL (compatible GitHub).",list:"Lista",mixed_btn:"🎓 Examen mixto",mixed_empty:"Se necesitan al menos 10 tarjetas entre los mazos",mo:"mes",nTopic:"{TOPIC}",nav_lib:"📚",next_rep:"próx.:",no_cards:"¡Aún no hay tarjetas!",notif_body:"{n} tarjetas te esperan 🧠",notif_off:"🔔 Recordatorios off",notif_on:"🔔 Recordatorios on",now:"ahora",ph_libsearch:"🔍 Filtrar biblioteca…",ph_search:"🔍 Buscar en todas las tarjetas…",png_ok:"PNG guardado 🖼",prompt_copied:"Prompt copiado",qe_saved:"Tarjeta actualizada ✓",qe_title:"✏️ Editar tarjeta (E)",res_h4:"Investigación:",retention:"+r+",rev_off:"⇄ Inverso off",rev_on:"⇄ Inverso: palabra → significado",ru:"ruso",rv_left:"Quedan: <b id='revLeft'>0</b>",rv_sess:"Sesión: <b id='sessDone'>0</b>",rv_streak:"Racha: <b id='streak'>🔥 0</b>",set_ai:"🔌 IA (clave API)",set_ai_d:"La clave se queda solo en tu navegador.",set_anim:"Animaciones",set_anim_d:"Animaciones de muelle (respeta los ajustes del sistema)",set_backup:"💾 Copias de seguridad",set_bk1:"Exportar todo",set_bk1b:"⬇ Descargar",set_bk1d:"Progreso + mazos + ajustes — un JSON",set_bk2:"Restaurar",set_bk2b:"⬆ Subir",set_color:"Acento",set_color_d:"La paleta por defecto se mantiene hasta que elijas",set_deadline:"📅 Fecha límite",set_exam:"Fecha del examen",set_focus:"🎯 Modo enfoque",set_fsrs:"🧬 Optimizador FSRS",set_goal:"🎯 Meta diaria",set_goal_d:"Repeticiones al día — anillo de progreso en la sesión",set_grade:"🎓 Curso",set_grade_all:"Todos los cursos",set_grade_d:"La biblioteca muestra los mazos de tu curso + todos los exámenes",set_haptic:"📳 Vibración",set_haptic_d:"Solo teléfonos",set_in_both:"Ambos",set_in_btn:"Botones",set_in_swipe:"Deslizamientos",set_input:"Forma de evaluar",set_input_d:"Deslizamientos, botones o ambos",set_inter:"🧩 Intercalado",set_inter_d:"Tarjetas de temas distintos mezcladas, no por bloques (Rohrer & Taylor, 2007: mejor recuerdo)",set_learn:"🧠 Aprendizaje",set_mode:"Tema",set_notif:"🔔 Recordatorios",set_notif_d:"Aviso de tarjetas pendientes mientras el sitio esté en segundo plano",set_ret:"Intensidad (retención)",set_ret_auto:"Por edad",set_ret_d:"Fácil 85% · Normal 90% · Examen 93% (Cepeda et al., 2006)",set_shuffle:"🔀 Barajar",set_sleep:"🌙 Sueño-aware",set_sleep_d:"Tras las 22:00 intervalos ×1.1",set_sound:"🔊 Sonido",set_sound_d:"Pitos de acierto/error (WebAudio, sin archivos)",set_sub:"Ajusta todo a tu cerebro: intensidad, entrada, animaciones, IA, copias.",set_ta:"⌨️ Campo de respuesta (estilo Anki)",set_ta_all:"Siempre",set_ta_d:"Escribe la respuesta, Enter — comprueba y revela",set_ta_off:"Off",set_th_auto:"🖥 Sistema",set_th_dark:"🌙 Oscura",set_th_light:"☀️ Clara",set_theme:"🎨 Apariencia",set_turbo:"⚡ Turbo por defecto",set_turbo_d:"Micro-sesiones de 5 tarjetas, temporizador de 7 s, XP combo",share:"🔗",share_copied:"¡Enlace copiado!",share_imported:"Mazo desde enlace 🔗",shuffle_off:"🔀 Barajar off",shuffle_on:"🔀 Barajar on",sleep_note:"Sesión tardía: intervalos algo más largos — el sueño consolidará la memoria",sleep_off:"🌙 Sueño-aware off",sleep_on:"🌙 Sueño-aware on",snd_off:"🔊 Sonido off",snd_on:"🔊 Sonido on",st_age:"edad cerebral",st_err:"No pude cargar la URL",st_go:"⬇ Cargar",st_h:"🌐 Catálogo de mazos por URL",st_ok:"Mazos cargados: {n}",st_p:"Un enlace a JSON {decks:[{name,cards:[{front,back}]}]} — p. ej. un raw de GitHub.",st_png:"⬇ Exportar PNG",st_total:"tarjetas en total",st_xp:"XP · nivel {l}",stats_h1:"Estadísticas",stats_sub:"Retención, previsión, puntos débiles, tu curva de memoria, logros.",streak7:"7 días seguidos",swipe_hint:"desliza: → Bien · ← Otra vez · ↑ Fácil · ↓ Difícil",t_lapsed:"olvidada",t_learning:"aprendiendo",t_new:"nueva",t_review:"repaso",tag_filter:"Todas las etiquetas",ti_empty:"Texto demasiado corto",ti_go:"✂️ Crear",ti_h:"✂️ Desde texto",ti_name:"Nombre",ti_ok:"Creadas {n} tarjetas",ti_p:"Pega una clase — el sitio crea tarjetas cloze.",ti_text:"Texto",to_all:"✓ todo repasado",to_decks:"A mazos",to_due:" pendientes",tr_gen:"Traduciendo con IA…",tr_ok:"Traducido: {n} → «{d}»",trash_h:"🗑 Papelera",trash_left:"se borra en {n} días",trash_restore:"↩️ Restaurar",turbo:"una sesión turbo",turbo_off:"⚡ Turbo off",turbo_on:"⚡ Turbo: 5 tarjetas, 7 s, ¡combo!",tut_h:"👆 Deslizamientos estilo Tinder",tut_ok:"¡Entendido!",tut_p:"Arrastra la tarjeta: → Bien · ← Otra vez · ↑ Fácil · ↓ Difícil. O botones / teclas 1–4.",undo_ok:"↩️ Deshecho",weak_empty:"Sin tarjetas problemáticas 💪",weak_h3:"⚠️ Puntos débiles",weak_hint:"💡 acortar",wk_h:"📈 Tu semana",wk_total:"Esta semana: <b>{n}</b> · meta diaria: {g}",xp1000:"1000 XP",y:"a",zh:"中文"},
+zh:{ach_h3:"🏆 成就",addcard:"＋ 卡片",again_again:"一分钟后回来",age_saved:"已保存",ai_bad:"无法解析 JSON",ai_copy:"📋 复制提示词",ai_direct:"⚡ 在此生成",ai_err:"API 无法访问——检查密钥/端点，或改用提示词",ai_gen:"生成中…",ai_h2:"🤖 AI 卡组",ai_import:"💾 导入",ai_ok:"AI 卡组已就绪 🤖",ai_p1:"直接生成（设置中填 API 密钥）或通过聊天。",ai_paste:"AI 的 JSON",ai_topic:"主题",alldone_p:"没有到期卡片。",alltag:"安装一个库卡组",anim_off:"动画已关闭",anim_on:"动画已开启",anki_d:"从 AnkiWeb 下载 .apkg，把文件直接拖到页面上——自动导入。卡组立刻出现在应用里。",anki_h:"🅰️ Anki 卡组",anki_ok:"已导入：{n} →「{d}」",anki_open:"打开 AnkiWeb",anki_sched:"已迁移进度：{n}",anki_subj:"按科目搜索：",apkg_err:"无法读取 .apkg——需要联网加载库。请用 .txt。",apkg_load:"正在加载 .apkg 库…",back:"← 返回卡组",bk_bad:"备份无效",bk_loaded:"已恢复 ✅",bk_ok:"备份已下载 💾",brain_h3:"🎂 大脑年龄",card_del:"卡片已删除",card_saved:"已保存 ✅",cm_back:"答案",cm_front:"问题",cm_h:"卡片",cm_img:"图片 URL",cm_t1:"基础",cm_t2:"输入答案",cm_tags:"标签",cm_type:"类型",conf_h:"确定吗？",confirm_all:"所有数据将被删除。",cram:"使用突击复习",cram_on:"⚡ 突击模式：不影响进度",curve_goal:"目标",curve_h3:"📉 记忆强度曲线（你的）",curve_hint_fit:"黄线来自你的 {n} 次复习：显示你记忆的真实保持情况。",curve_hint_no:"数据还不够（{n}）。约 20 次复习后，这里会出现你的个人曲线。",curve_l1:"弱",curve_l2:"中",curve_l3:"稳固",curve_yours:"你的",d:"天",d_due:"到期",d_mature:"成熟",d_new:"新卡",d_reps:"复习次数",d_ret:"保持率",d_rot2:"轮转中",dd_hint:"📥 松开文件——我来导入",deck_created:"卡组已创建 🎉",deck_del:"卡组已删除",deck_restored:"卡组已恢复 ✓",decks_sub:"创建、导入（Anki .apkg/.txt/.json、GitHub URL）、从卡组库获取。",demo_desc:"示例",demo_name:"🎓 演示：记忆",dm_desc:"描述",dm_h:"新卡组",dm_name:"名称",done_p:"已复习：{n}。+{xp} XP 🧠",duel:"战胜机器人",en:"英语",enter_name:"输入名称",es:"西班牙语",ex_again:"🎲 再来一次",ex_g2:"需要复习——2 分 💪",ex_g3:"尚可——3 分",ex_g4:"良好——4 分 👍",ex_g5:"优秀——5 分 🏆",ex_h:"📝 模拟考试",ex_reset:"🗑 重置全部",ex_score:"得分：{n}/{m}",exam_btn:"📝 模拟考试",exam_left:"还剩 {n} 天",exam_set:"截止 {d}：间隔 ×{k}",exp_ok:"已导出 👍",f1d:"算法会根据你的复习历史自我调整。",f1t:"FSRS + 优化器",f2d:"右 = 良好，左 = 忘记，上 = 简单，下 = 较难。",f2t:"滑动",f3d:"5 卡微会话 + 7 秒计时 + 连击 XP——碎片思维模式。",f3t:"冲刺模式",f4d:"与机器人对决记忆，还有解压泡泡。",f4t:"小游戏",f5d:"夜晚间隔更温和——睡眠巩固记忆（Rasch & Born, 2013）。",f5t:"睡眠感知",f6d:"粘贴你自己的密钥（兼容 OpenAI）——就在网站上生成卡组。",f6t:"AI API",fc_h3:"📅 负载预测（7 天）",fill:"两面都要填",first:"第 1 次复习",fsrs_info:"已用 {n} 次复习训练",fsrs_new:"暂无数据——默认参数",g1_botthink:"🤖 机器人思考中…",g1_botwin:"🤖 机器人抢先答对！",g1_d:"谁先想起正确答案——你还是机器人？机器人也会出错。",g1_h:"⚔️ 记忆对决：你 vs 机器人",g1_lose:"🤖 机器人获胜",g1_round:"第 {n}/10 回合",g1_tie:"🤝 平局",g1_win:"🎉 你赢了！",g2_d:"戳泡泡 30 秒。简单又解压。",g2_h:"🫧 解压：泡泡",g2_score:"已戳：{n}",g3_d:"问题和答案打乱——找出你自己卡组里的所有配对。",g3_h:"🧩 找配对",g3_moves:"步数：<b>{n}</b>",g3_pairs:"配对：{n}/{m}",g3_start:"开始游戏",g3_time:"用时：{n} 秒",g3_win:"🎉 全部配对完成！",games_sub:"大脑热身，释放压力。",grade_set:"年级：{n} ✓",h:"小时",hap_off:"振动已关闭",hap_on:"振动已开启",heat_h3:"🔥 年度活跃",hero_p:"会从你的回答中学习的 FSRS 算法。Tinder 式滑动、冲刺模式、小游戏、AI、卡组库和 5 种语言。免费离线。",hi:"印地语",hint:"空格——翻面",hint_letter:"提示",hub_btn:"☁️ 社区卡组",hundred:"100 次复习",imp_ai:"🤖 AI 卡组",imp_empty:"无法识别的文件",imp_export:"⬇ Anki txt",imp_file:"📥 导入文件",imp_text:"✂️ 从文本",inter_off:"🧩 交错已关闭",inter_on:"🧩 交错已开启",keys_hint:"H——提示 · F——专注 · Z——撤销 · Ctrl+K——命令",language:"+LN+",lib_added:"已添加「{d}」📚",lib_h1:"📚 卡组库",lib_have:"✓ 已安装",lib_store:"🌐 URL 目录",lib_sub:"科目、考试、语言、生成器。还支持 URL 外部目录（兼容 GitHub）。",list:"列表",mixed_btn:"🎓 混合考试",mixed_empty:"所有卡组合计至少需要 10 张卡",mo:"月",nTopic:"{TOPIC}",nav_lib:"📚",next_rep:"下次：",no_cards:"还没有卡片！",notif_body:"{n} 张卡片在等你 🧠",notif_off:"🔔 提醒已关闭",notif_on:"🔔 提醒已开启",now:"现在",ph_libsearch:"🔍 筛选卡组库…",ph_search:"🔍 搜索全部卡片…",png_ok:"PNG 已保存 🖼",prompt_copied:"提示词已复制",qe_saved:"卡片已更新 ✓",qe_title:"✏️ 编辑卡片 (E)",res_h4:"研究：",retention:"+r+",rev_off:"⇄ 反转已关闭",rev_on:"⇄ 反转：词 → 义",ru:"俄语",rv_left:"剩余：<b id='revLeft'>0</b>",rv_sess:"会话：<b id='sessDone'>0</b>",rv_streak:"连击：<b id='streak'>🔥 0</b>",set_ai:"🔌 AI（API 密钥）",set_ai_d:"密钥只保存在你的浏览器里。",set_anim:"动画",set_anim_d:"弹簧动画（遵循系统设置）",set_backup:"💾 备份",set_bk1:"导出全部",set_bk1b:"⬇ 下载",set_bk1d:"进度 + 卡组 + 设置——一个 JSON",set_bk2:"恢复",set_bk2b:"⬆ 上传",set_color:"主题色",set_color_d:"默认配色保持不变，直到你选择",set_deadline:"📅 截止日期",set_exam:"考试日期",set_focus:"🎯 专注模式",set_fsrs:"🧬 FSRS 优化器",set_goal:"🎯 每日目标",set_goal_d:"每天复习数——会话中的进度环",set_grade:"🎓 年级",set_grade_all:"所有年级",set_grade_d:"卡组库显示你年级的卡组 + 全部考试",set_haptic:"📳 振动",set_haptic_d:"仅手机",set_in_both:"两者",set_in_btn:"按钮",set_in_swipe:"滑动",set_input:"评分方式",set_input_d:"滑动、按钮或两者",set_inter:"🧩 交错",set_inter_d:"不同主题的卡片混在一起，而不是分块（Rohrer & Taylor, 2007：回忆更好）",set_learn:"🧠 学习",set_mode:"主题",set_notif:"🔔 提醒",set_notif_d:"网站在后台时提醒到期卡片",set_ret:"强度（保持率）",set_ret_auto:"按年龄",set_ret_d:"轻松 85% · 标准 90% · 考试 93%（Cepeda 等，2006）",set_shuffle:"🔀 洗牌",set_sleep:"🌙 睡眠感知",set_sleep_d:"22 点后间隔 ×1.1",set_sound:"🔊 声音反馈",set_sound_d:"对/错短提示音（WebAudio，无文件）",set_sub:"一切按你的大脑调校：强度、输入、动画、AI、备份。",set_ta:"⌨️ 答案输入框（Anki 式）",set_ta_all:"始终",set_ta_d:"输入答案，回车——检查并显示",set_ta_off:"关",set_th_auto:"🖥 系统",set_th_dark:"🌙 深色",set_th_light:"☀️ 浅色",set_theme:"🎨 外观",set_turbo:"⚡ 默认冲刺",set_turbo_d:"5 卡微会话、7 秒计时、连击 XP",share:"🔗",share_copied:"链接已复制！",share_imported:"来自链接的卡组 🔗",shuffle_off:"🔀 洗牌已关闭",shuffle_on:"🔀 洗牌已开启",sleep_note:"深夜会话：间隔略长——睡眠会巩固记忆",sleep_off:"🌙 睡眠感知已关闭",sleep_on:"🌙 睡眠感知已开启",snd_off:"🔊 声音已关闭",snd_on:"🔊 声音已开启",st_age:"大脑年龄",st_err:"无法加载 URL",st_go:"⬇ 加载",st_h:"🌐 URL 卡组目录",st_ok:"已加载卡组：{n}",st_p:"指向 JSON {decks:[{name,cards:[{front,back}]}]} 的链接——例如 GitHub raw 文件。",st_png:"⬇ 导出 PNG",st_total:"总卡片",st_xp:"XP · 等级 {l}",stats_h1:"统计",stats_sub:"保持率、预测、薄弱点、你的记忆强度曲线、成就。",streak7:"连续 7 天",swipe_hint:"滑动：→ 良好 · ← 忘记 · ↑ 简单 · ↓ 较难",t_lapsed:"遗忘",t_learning:"学习中",t_new:"新卡",t_review:"复习",tag_filter:"全部标签",ti_empty:"文本太短",ti_go:"✂️ 创建",ti_h:"✂️ 从文本",ti_name:"名称",ti_ok:"已创建 {n} 张卡片",ti_p:"粘贴讲义——网站会生成填空卡。",ti_text:"文本",to_all:"✓ 全部复习完",to_decks:"返回卡组",to_due:" 待复习",tr_gen:"AI 翻译中…",tr_ok:"已翻译：{n} →「{d}」",trash_h:"🗑 回收站",trash_left:"{n} 天后自动删除",trash_restore:"↩️ 恢复",turbo:"一次冲刺会话",turbo_off:"⚡ 冲刺已关闭",turbo_on:"⚡ 冲刺：5 卡、7 秒、连击！",tut_h:"👆 Tinder 式滑动",tut_ok:"明白了！",tut_p:"拖动卡片：→ 良好 · ← 忘记 · ↑ 简单 · ↓ 较难。或按钮 / 数字键 1–4。",undo_ok:"↩️ 已撤销",weak_empty:"没有问题卡片 💪",weak_h3:"⚠️ 薄弱点",weak_hint:"💡 缩短",wk_h:"📈 你的一周",wk_total:"本周：<b>{n}</b> · 每日目标：{g}",xp1000:"1000 XP",y:"年",zh:"中文"},
+hi:{ach_h3:"🏆 उपलब्धियाँ",addcard:"＋ कार्ड",again_again:"एक मिनट में लौटेगा",age_saved:"सहेजा गया",ai_bad:"JSON समझ नहीं आया",ai_copy:"📋 प्रॉम्प्ट कॉपी करें",ai_direct:"⚡ यहीं बनाएँ",ai_err:"API नहीं मिला — कुंजी/एंडपॉइंट जाँचें या प्रॉम्प्ट इस्तेमाल करें",ai_gen:"बन रहा है…",ai_h2:"🤖 AI डेक",ai_import:"💾 इंपोर्ट",ai_ok:"AI डेक तैयार 🤖",ai_p1:"सीधा जनरेशन (सेटिंग्स में API कुंजी) या चैट से।",ai_paste:"AI का JSON",ai_topic:"विषय",alldone_p:"कोई कार्ड बाकी नहीं।",alltag:"लाइब्रेरी का डेक इंस्टॉल करें",anim_off:"एनिमेशन बंद",anim_on:"एनिमेशन चालू",anki_d:"AnkiWeb से .apkg डाउनलोड करें और फ़ाइल को पेज पर छोड़ें — अपने-आप इंपोर्ट होगा। डेक तुरंत ऐप में आ जाएगा।",anki_h:"🅰️ Anki डेक",anki_ok:"इंपोर्ट: {n} → «{d}»",anki_open:"AnkiWeb खोलें",anki_sched:"शेड्यूल माइग्रेट: {n}",anki_subj:"विषय से खोजें:",apkg_err:".apkg पढ़ नहीं पाया — लाइब्रेरी के लिए इंटरनेट चाहिए। .txt इस्तेमाल करें।",apkg_load:".apkg लाइब्रेरी लोड हो रही है…",back:"← डेक पर",bk_bad:"अमान्य बैकअप",bk_loaded:"पुनर्स्थापित ✅",bk_ok:"बैकअप डाउनलोड हुआ 💾",brain_h3:"🎂 दिमाग़ की उम्र",card_del:"कार्ड हटाया गया",card_saved:"सहेजा गया ✅",cm_back:"उत्तर",cm_front:"प्रश्न",cm_h:"कार्ड",cm_img:"इमेज URL",cm_t1:"सामान्य",cm_t2:"उत्तर लिखें",cm_tags:"टैग",cm_type:"प्रकार",conf_h:"पक्का?",confirm_all:"सब कुछ हट जाएगा।",cram:"क्रैम चलाएँ",cram_on:"⚡ क्रैम: प्रगति नहीं बदलती",curve_goal:"लक्ष्य",curve_h3:"📉 स्मृति-शक्ति वक्र (आपका)",curve_hint_fit:"पीली रेखा आपके {n} रिव्यू से बनी है: आपकी स्मृति असल में कैसे टिकती है।",curve_hint_no:"अभी पर्याप्त डेटा नहीं ({n})। ~20 रिव्यू के बाद आपका निजी वक्र यहाँ दिखेगा।",curve_l1:"कमज़ोर",curve_l2:"मध्यम",curve_l3:"मज़बूत",curve_yours:"आपका",d:"दिन",d_due:"बाकी",d_mature:"पक्के",d_new:"नए",d_reps:"रिव्यू",d_ret:"स्मृति-दर",d_rot2:"चक्र में",dd_hint:"📥 फ़ाइल छोड़ें — मैं इंपोर्ट करूँगा",deck_created:"डेक बना 🎉",deck_del:"डेक हटाया गया",deck_restored:"डेक पुनर्स्थापित ✓",decks_sub:"बनाएँ, इंपोर्ट करें (Anki .apkg/.txt/.json, GitHub URL), लाइब्रेरी से लें।",demo_desc:"नमूना",demo_name:"🎓 डेमो: स्मृति",dm_desc:"विवरण",dm_h:"नया डेक",dm_name:"नाम",done_p:"रिव्यू: {n}। +{xp} XP 🧠",duel:"बॉट को हराएँ",en:"अंग्रेज़ी",enter_name:"नाम लिखें",es:"स्पेनिश",ex_again:"🎲 फिर कोशिश",ex_g2:"दोहराव चाहिए — ग्रेड 2 💪",ex_g3:"ठीक — ग्रेड 3",ex_g4:"अच्छा — ग्रेड 4 👍",ex_g5:"शानदार — ग्रेड 5 🏆",ex_h:"📝 मॉक परीक्षा",ex_reset:"🗑 सब रीसेट",ex_score:"स्कोर: {n}/{m}",exam_btn:"📝 मॉक परीक्षा",exam_left:"{n} दिन बाकी",exam_set:"डेडलाइन {d}: अंतराल ×{k}",exp_ok:"एक्सपोर्ट हुआ 👍",f1d:"एल्गोरिद्म आपके रिव्यू इतिहास से खुद को ढालता है।",f1t:"FSRS + ऑप्टिमाइज़र",f2d:"दाएँ = अच्छा, बाएँ = फिर से, ऊपर = आसान, नीचे = कठिन।",f2t:"स्वाइप",f3d:"5-कार्ड माइक्रो-सेशन, 7 सेकंड टाइमर और कोम्बो XP — क्लिप-सोच मोड।",f3t:"टर्बो मोड",f4d:"बॉट के साथ स्मृति-ड्यूल और एंटी-स्ट्रेस बुलबुले।",f4t:"मिनी-गेम्स",f5d:"रात में अंतराल नरम हो जाते हैं — नींद स्मृति को पक्का करती है (Rasch & Born, 2013)।",f5t:"नींद-सजग",f6d:"अपनी कुंजी चिपकाएँ (OpenAI-संगत) — डेक सीधे साइट पर बनते हैं।",f6t:"AI API",fc_h3:"📅 भार पूर्वानुमान (7 दिन)",fill:"दोनों ओर भरें",first:"पहला रिव्यू",fsrs_info:"{n} रिव्यू पर प्रशिक्षित",fsrs_new:"कोई डेटा नहीं — डिफ़ॉल्ट पैरामीटर",g1_botthink:"🤖 बॉट सोच रहा है…",g1_botwin:"🤖 बॉट ने पहले जवाब दिया!",g1_d:"सही जवाब सबसे पहले कौन याद करेगा — आप या बॉट? बॉट भी गलती करता है।",g1_h:"⚔️ स्मृति-ड्यूल बनाम बॉट",g1_lose:"🤖 बॉट जीता",g1_round:"राउंड {n}/10",g1_tie:"🤝 बराबरी",g1_win:"🎉 आप जीते!",g2_d:"30 सेकंड बुलबुले फोड़ें। सरल और सुखद।",g2_h:"🫧 एंटी-स्ट्रेस: बुलबुले",g2_score:"फोड़े: {n}",g3_d:"प्रश्न-उत्तर घुले-मिले — अपने डेक की हर जोड़ी खोजें।",g3_h:"🧩 जोड़ी खोजें",g3_moves:"चालें: <b>{n}</b>",g3_pairs:"जोड़ियाँ: {n}/{m}",g3_start:"गेम शुरू करें",g3_time:"समय: {n} से",g3_win:"🎉 सारी जोड़ियाँ मिल गईं!",games_sub:"दिमाग़ की कसरत और तनाव-मुक्ति।",grade_set:"कक्षा: {n} ✓",h:"घं",hap_off:"वाइब्रेशन बंद",hap_on:"वाइब्रेशन चालू",heat_h3:"🔥 साल की गतिविधि",hero_p:"FSRS एल्गोरिद्म जो आपके जवाबों से सीखता है। टिंडर-अंदाज़ स्वाइप, टर्बो मोड, मिनी-गेम्स, AI, डेक लाइब्रेरी और 5 भाषाएँ। मुफ़्त और ऑफ़लाइन।",hi:"हिन्दी",hint:"स्पेस — दिखाएँ",hint_letter:"संकेत",hub_btn:"☁️ कम्युनिटी डेक",hundred:"100 रिव्यू",imp_ai:"🤖 AI डेक",imp_empty:"फ़ाइल पहचान नहीं आई",imp_export:"⬇ Anki txt",imp_file:"📥 फ़ाइल इंपोर्ट",imp_text:"✂️ टेक्स्ट से",inter_off:"🧩 इंटरलीविंग बंद",inter_on:"🧩 इंटरलीविंग चालू",keys_hint:"H — संकेत · F — फोकस · Z — पूर्ववत · Ctrl+K — कमांड",language:"+LN+",lib_added:"«{d}» जुड़ा 📚",lib_h1:"📚 लाइब्रेरी",lib_have:"✓ इंस्टॉल है",lib_store:"🌐 URL कैटलॉग",lib_sub:"विषय, परीक्षा, भाषाएँ, जनरेटर। साथ में URL से बाहरी कैटलॉग (GitHub-संगत)।",list:"सूची",mixed_btn:"🎓 मिक्स्ड परीक्षा",mixed_empty:"सभी डेक मिलाकर कम से कम 10 कार्ड चाहिए",mo:"माह",nTopic:"{TOPIC}",nav_lib:"📚",next_rep:"अगला:",no_cards:"अभी कोई कार्ड नहीं!",notif_body:"{n} कार्ड इंतज़ार कर रहे हैं 🧠",notif_off:"🔔 रिमाइंडर बंद",notif_on:"🔔 रिमाइंडर चालू",now:"अभी",ph_libsearch:"🔍 लाइब्रेरी फ़िल्टर…",ph_search:"🔍 सभी कार्ड खोजें…",png_ok:"PNG सहेजा गया 🖼",prompt_copied:"प्रॉम्प्ट कॉपी हुआ",qe_saved:"कार्ड अपडेट हुआ ✓",qe_title:"✏️ कार्ड संपादित करें (E)",res_h4:"अनुसंधान:",retention:"+r+",rev_off:"⇄ उल्टा बंद",rev_on:"⇄ उल्टा: शब्द → अर्थ",ru:"रूसी",rv_left:"बाकी: <b id='revLeft'>0</b>",rv_sess:"सेशन: <b id='sessDone'>0</b>",rv_streak:"स्ट्रीक: <b id='streak'>🔥 0</b>",set_ai:"🔌 AI (API कुंजी)",set_ai_d:"कुंजी सिर्फ़ आपके ब्राउज़र में रहती है।",set_anim:"एनिमेशन",set_anim_d:"स्प्रिंग एनिमेशन (सिस्टम सेटिंग का ध्यान रखता है)",set_backup:"💾 बैकअप",set_bk1:"सब एक्सपोर्ट",set_bk1b:"⬇ डाउनलोड",set_bk1d:"प्रगति + डेक + सेटिंग्स — एक JSON",set_bk2:"पुनर्स्थापना",set_bk2b:"⬆ अपलोड",set_color:"एक्सेंट",set_color_d:"डिफ़ॉल्ट पैलेट तब तक वही जब तक चुनें",set_deadline:"📅 डेडलाइन",set_exam:"परीक्षा की तारीख",set_focus:"🎯 फोकस मोड",set_fsrs:"🧬 FSRS ऑप्टिमाइज़र",set_goal:"🎯 दैनिक लक्ष्य",set_goal_d:"प्रतिदिन रिव्यू — सेशन में प्रोग्रेस रिंग",set_grade:"🎓 कक्षा",set_grade_all:"सभी कक्षाएँ",set_grade_d:"लाइब्रेरी आपकी कक्षा के डेक + सभी परीक्षा दिखाएगी",set_haptic:"📳 वाइब्रेशन",set_haptic_d:"सिर्फ़ फ़ोन",set_in_both:"दोनों",set_in_btn:"बटन",set_in_swipe:"स्वाइप",set_input:"रेटिंग तरीका",set_input_d:"स्वाइप, बटन या दोनों",set_inter:"🧩 इंटरलीविंग",set_inter_d:"अलग-अलग विषयों के कार्ड मिले हुए, ब्लॉक नहीं (Rohrer & Taylor, 2007: बेहतर स्मृति)",set_learn:"🧠 सीखना",set_mode:"थीम",set_notif:"🔔 रिमाइंडर",set_notif_d:"साइट बैकग्राउंड में होने पर बाकी कार्डों की सूचना",set_ret:"तीव्रता (स्मृति-दर)",set_ret_auto:"उम्र के अनुसार",set_ret_d:"आसान 85% · सामान्य 90% · परीक्षा 93% (Cepeda आदि, 2006)",set_shuffle:"🔀 शफ़ल",set_sleep:"🌙 नींद-सजग",set_sleep_d:"रात 10 बजे के बाद अंतराल ×1.1",set_sound:"🔊 ध्वनि प्रतिक्रिया",set_sound_d:"सही/गलत छोटे बीप (WebAudio, बिना फ़ाइल)",set_sub:"सब अपने दिमाग़ के हिसाब से: तीव्रता, इनपुट, एनिमेशन, AI, बैकअप।",set_ta:"⌨️ उत्तर-बॉक्स (Anki-अंदाज़)",set_ta_all:"हमेशा",set_ta_d:"उत्तर लिखें, Enter — जाँच और दिखाएँ",set_ta_off:"बंद",set_th_auto:"🖥 सिस्टम",set_th_dark:"🌙 गहरी",set_th_light:"☀️ हल्की",set_theme:"🎨 रूप",set_turbo:"⚡ डिफ़ॉल्ट टर्बो",set_turbo_d:"5-कार्ड माइक्रो-सेशन, 7 सेकंड टाइमर, कोम्बो XP",share:"🔗",share_copied:"लिंक कॉपी हुआ!",share_imported:"लिंक से डेक 🔗",shuffle_off:"🔀 शफ़ल बंद",shuffle_on:"🔀 शफ़ल चालू",sleep_note:"देर सेशन: अंतराल थोड़े लंबे — नींद स्मृति पक्की करेगी",sleep_off:"🌙 नींद-सजग बंद",sleep_on:"🌙 नींद-सजग चालू",snd_off:"🔊 ध्वनि बंद",snd_on:"🔊 ध्वनि चालू",st_age:"दिमाग़ की उम्र",st_err:"URL लोड नहीं हुआ",st_go:"⬇ लोड",st_h:"🌐 URL से डेक कैटलॉग",st_ok:"डेक लोड हुए: {n}",st_p:"JSON {decks:[{name,cards:[{front,back}]}]} का लिंक — जैसे GitHub raw फ़ाइल।",st_png:"⬇ PNG एक्सपोर्ट",st_total:"कुल कार्ड",st_xp:"XP · लेवल {l}",stats_h1:"आँकड़े",stats_sub:"स्मृति-दर, पूर्वानुमान, कमज़ोर जगहें, आपका स्मृति-वक्र, उपलब्धियाँ।",streak7:"लगातार 7 दिन",swipe_hint:"स्वाइप: → अच्छा · ← फिर से · ↑ आसान · ↓ कठिन",t_lapsed:"भूला",t_learning:"सीख रहे",t_new:"नया",t_review:"रिव्यू",tag_filter:"सभी टैग",ti_empty:"टेक्स्ट बहुत छोटा",ti_go:"✂️ बनाएँ",ti_h:"✂️ टेक्स्ट से",ti_name:"नाम",ti_ok:"{n} कार्ड बने",ti_p:"लेक्चर चिपकाएँ — साइट cloze कार्ड बनाएगी।",ti_text:"टेक्स्ट",to_all:"✓ सब रिव्यू हुआ",to_decks:"डेक पर",to_due:" बाकी",tr_gen:"AI अनुवाद कर रहा है…",tr_ok:"अनुवाद: {n} → «{d}»",trash_h:"🗑 कूड़ा",trash_left:"{n} दिन में अपने-आप हटेगा",trash_restore:"↩️ पुनर्स्थापित",turbo:"एक टर्बो सेशन",turbo_off:"⚡ टर्बो बंद",turbo_on:"⚡ टर्बो: 5 कार्ड, 7 सेकंड, कोम्बो!",tut_h:"👆 टिंडर-अंदाज़ स्वाइप",tut_ok:"समझ गए!",tut_p:"कार्ड खींचें: → अच्छा · ← फिर से · ↑ आसान · ↓ कठिन। या बटन / कुंजियाँ 1–4।",undo_ok:"↩️ पूर्ववत",weak_empty:"कोई परेशानी कार्ड नहीं 💪",weak_h3:"⚠️ कमज़ोर जगहें",weak_hint:"💡 छोटा करें",wk_h:"📈 आपका सप्ताह",wk_total:"इस हफ़्ते: <b>{n}</b> · दैनिक लक्ष्य: {g}",xp1000:"1000 XP",y:"व",zh:"चीनी"}
+};
+const I18N_X2={
+es:{leech_tag:"Tarjeta marcada como «difícil» — repásala más a menudo",star_only:"⭐ Favoritas",g3_best:"Récord: {n} s · {m} movimientos"},
+zh:{leech_tag:"卡片已标记为「难记」——请多复习",star_only:"⭐ 收藏",g3_best:"纪录：{n} 秒 · {m} 步"},
+hi:{leech_tag:"कार्ड «कठिन» चिह्नित — इसे और दोहराएँ",star_only:"⭐ पसंदीदा",g3_best:"रिकॉर्ड: {n} से · {m} चालें"}
+};
+Object.assign(ES,I18N_X.es||{},I18N_X2.es||{},{btn_again:"Otra vez",btn_hard:"Difícil",btn_good:"Bien",btn_easy:"Fácil",t_all:"Todos los estados"});
+Object.assign(ZH,I18N_X.zh||{},I18N_X2.zh||{},{btn_again:"忘记",btn_hard:"较难",btn_good:"良好",btn_easy:"简单",t_all:"全部状态"});
+Object.assign(HI,I18N_X.hi||{},I18N_X2.hi||{},{btn_again:"फिर से",btn_hard:"कठिन",btn_good:"अच्छा",btn_easy:"आसान",t_all:"सभी स्थितियाँ"});
 const LANGS={ru:RU,en:EN,es:ES,zh:ZH,hi:HI};
 let lang=localStorage.getItem('mf-lang')||'ru';
 function t(k){const d=LANGS[lang];return(d[k]!==undefined?d[k]:EN[k]!==undefined?EN[k]:k)}
@@ -907,7 +956,7 @@ function fmt(m,d){let s=String(m);['n','d','xp','m','k','l'].forEach(key=>{if(d&
 
 /* ============ store ============ */
 const store={load(){try{return JSON.parse(localStorage.getItem('memflow')||'null')}catch(e){return null}},save(d){localStorage.setItem('memflow',JSON.stringify(d))}};
-const DEF_SET={age:18,grade:0,theme:'dark',accent:null,shuffle:false,exam:null,reverse:false,sleep:true,anim:true,haptic:true,turbo:false,inputMode:'both',retMode:'auto',typeAnswer:'always',dailyGoal:30,interleave:false,sound:false,notif:false,aiEndpoint:'',aiKey:'',aiModel:''};
+const DEF_SET={age:18,grade:0,theme:'dark',accent:null,shuffle:false,exam:null,reverse:false,sleep:true,anim:true,haptic:true,turbo:false,inputMode:'buttons',retMode:'auto',typeAnswer:'always',dailyGoal:30,interleave:false,sound:false,notif:false,aiEndpoint:'',aiKey:'',aiModel:''};
 let db=store.load()||{decks:[],log:[],settings:Object.assign({},DEF_SET),fsrs:{mult:1,decayAdj:0,trained:0},gamif:{xp:0,ach:[],dayStreak:0,lastDay:0,freezes:1}};
 db.settings=Object.assign({},DEF_SET,db.settings||{});
 db.fsrs=db.fsrs||{mult:1,decayAdj:0,trained:0};
@@ -1610,6 +1659,23 @@ function quickEditCard(){
   const it=queue[0];
   editCard(it.d.id,it.c.id);
 }
+/* v4.9: звёзды карточек (как в Quizlet) — отметить текущую и сессия «только избранные» */
+function toggleStarCurrent(){
+  if(!queue.length)return;
+  const c=queue[0].c;
+  c.star=!c.star;
+  persist();
+  const b=document.getElementById('cardStar');
+  if(b)b.classList.toggle('on',!!c.star);
+  toast(c.star?'⭐':'☆');
+}
+function startStarReview(deckId){
+  const d=db.decks.find(x=>x.id===deckId);
+  queue=d.cards.filter(c=>c.star).map(c=>({c,d}));
+  if(!queue.length){toast('☆');return}
+  go('review');cramMode=false;
+  applyModeClasses();beginSession();
+}
 /* v4.8: морфинг «плитка колоды → заголовок списка» через view-transition-name */
 function viewCardsMorph(id,btn){
   const tile=btn&&btn.closest?btn.closest('.deck'):null;
@@ -1633,27 +1699,42 @@ function saveCard(){
   /* v4.8: после правки из сессии перерисовываем текущую карточку на месте */
   else if(curPage==='review')renderReview();
 }
+/* v4.9: браузер карточек с фильтрами (как Browse в Anki) — состояние + тег + поиск */
+let cardFilter={deckId:null,state:'',tag:'',q:''};
 function viewCards(deckId){
   decksState={mode:'cards',deckId};
-  const d=db.decks.find(x=>x.id===deckId),g=document.getElementById('deckGrid');  const stName={new:t('t_new'),learning:t('t_learning'),review:t('t_review'),lapsed:t('t_lapsed')};
+  if(cardFilter.deckId!==deckId)cardFilter={deckId,state:'',tag:'',q:''};
+  const d=db.decks.find(x=>x.id===deckId),g=document.getElementById('deckGrid');
+  const stName={new:t('t_new'),learning:t('t_learning'),review:t('t_review'),lapsed:t('t_lapsed')};
   const allTags=[...new Set(d.cards.flatMap(c=>c.tags||[]))];
-  const tagSel=allTags.length?'<select style="width:auto;padding:8px" onchange="startReview('+deckId+',this.value)"><option>'+t('tag_filter')+'</option>'+allTags.map(tg=>'<option>'+esc(tg)+'</option>').join('')+'</select>':'';
+  const stateSel='<select style="width:auto;padding:8px" onchange="cardFilter.state=this.value;viewCards('+deckId+')"><option value=""'+(cardFilter.state?'':' selected')+'>'+t('t_all')+'</option>'+
+    ['new','learning','review','lapsed'].map(s=>'<option value="'+s+'"'+(cardFilter.state===s?' selected':'')+'>'+stName[s]+'</option>').join('')+'</select>';
+  const tagSel=(allTags.length?'<select style="width:auto;padding:8px" onchange="cardFilter.tag=this.value;viewCards('+deckId+')"><option value="">'+t('tag_filter')+'</option>'+
+    allTags.map(tg=>'<option'+(cardFilter.tag===tg?' selected':'')+'>'+esc(tg)+'</option>').join('')+'</select>':'')+
+    '<input class="searchbox" style="max-width:210px;padding:8px 12px" placeholder="'+esc(t('ph_search'))+'" value="'+esc(cardFilter.q)+'" oninput="debCardList('+deckId+',this.value)">';
+  const shown=d.cards.filter(c=>
+    (!cardFilter.state||c.state===cardFilter.state)&&
+    (!cardFilter.tag||(c.tags||[]).includes(cardFilter.tag))&&
+    (!cardFilter.q||c.front.toLowerCase().includes(cardFilter.q.toLowerCase())||c.back.toLowerCase().includes(cardFilter.q.toLowerCase())));
   /* v4.8: заголовок списка получает то же view-transition-name, что и плитка — браузер сам морфит */
   if(document.startViewTransition&&db.settings.anim&&!RM)setTimeout(()=>{const h=g.querySelector('h2');if(h){h.style.viewTransitionName='deck-'+deckId;setTimeout(()=>{h.style.viewTransitionName=''},900)}},0);
   g.innerHTML='<div style="grid-column:1/-1;display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap">'+
-    '<button class="ghost" onclick="renderDecks()">'+t('back')+'</button><h2 style="flex:1">'+esc(d.name)+'</h2>'+tagSel+
+    '<button class="ghost" onclick="cardFilter.state=\'\';cardFilter.tag=\'\';cardFilter.q=\'\';renderDecks()">'+t('back')+'</button><h2 style="flex:1">'+esc(d.name)+'</h2>'+stateSel+tagSel+
+    (d.cards.some(c=>c.star)?'<button class="ghost starfilter" onclick="startStarReview('+deckId+')">⭐ '+d.cards.filter(c=>c.star).length+'</button>':'')+
     '<button class="ghost" onclick="openAddCard('+deckId+')">＋ '+t('addcard')+'</button></div>'+
     '<div class="cardlist" style="grid-column:1/-1">'+
-    (d.cards.length?d.cards.map(c=>{
+    (shown.length?shown.map(c=>{
       const dueTxt=c.state==='new'?'—':(c.due<=Date.now()?t('now'):fmtDays((c.due-Date.now())/86400000));
-      return '<div class="cardrow"><div class="txt"><b>'+esc(c.front)+'</b><span>'+esc(c.back)+'</span></div>'+
-        (c.tags||[]).map(tg=>'<span class="tagchip">'+esc(tg)+'</span>').join('')+
+      return '<div class="cardrow"><div class="txt"><b>'+(c.star?'<span style="color:#f1c40f">★ </span>':'')+esc(c.front)+'</b><span>'+esc(c.back)+'</span></div>'+
+        (c.tags||[]).map(tg=>'<span class="tagchip"'+(tg===(lang==='ru'?'трудная':'leech')?' style="border-color:var(--bad);color:var(--bad)"':'')+'>'+esc(tg)+'</span>').join('')+
         '<span class="state st-'+c.state+'">'+stName[c.state]+'</span>'+
         '<span class="next">'+t('next_rep')+' '+dueTxt+'</span>'+
         '<button class="iconbtn" onclick="editCard('+deckId+','+c.id+')">✏️</button>'+
         '<button class="iconbtn" onclick="askDeleteCard('+deckId+','+c.id+')">🗑</button></div>';
-    }).join(''):'<p style="color:var(--muted);text-align:center;padding:30px">'+t('no_cards')+'</p>')+'</div>';
+    }).join(''):'<p style="color:var(--muted);text-align:center;padding:30px">'+(d.cards.length?t('no_cards'):'∅')+'</p>')+
+    (shown.length!==d.cards.length?'<p style="color:var(--muted);font-size:12px;text-align:center;padding:8px">'+shown.length+' / '+d.cards.length+'</p>':'')+'</div>';
 }
+window.debCardList=debounce((id,v)=>{cardFilter.q=v;viewCards(id)},160);
 function askDeleteCard(deckId,cardId){document.getElementById('confirmYes').onclick=()=>{
   const d=db.decks.find(x=>x.id===deckId);d.cards=d.cards.filter(c=>c.id!==cardId);
   persist();closeModal('confirmModal');viewCards(deckId);toast(t('card_del'))};openModal('confirmModal')}
@@ -1815,7 +1896,8 @@ function renderReview(){
   const c=queue[0].c,f=cardFaces(c);
   document.getElementById('revBar').style.width=Math.round(session.done/(session.done+queue.length)*100)+'%';
   const cloze=c.type==='cloze';
-  const swipeable=db.settings.inputMode!=='buttons';
+  /* v4.9: свайпы — только при явном режиме «Свайпы» в настройках (кнопки как в Anki по умолчанию) */
+  const swipeable=db.settings.inputMode==='swipe';
   const showTA=db.settings.typeAnswer==='always'||c.type==='input';
   const showTut=!localStorage.getItem('mf-tutored')&&swipeable&&session.done===0&&!cramMode&&!examMode&&queue.length>1;
   const tut=showTut?'<div class="tutbox"><b>'+esc(t('tut_h'))+'</b>'+
@@ -1828,6 +1910,7 @@ function renderReview(){
         (f.img?'<img class="ph" src="'+esc(f.img)+'" alt="" onerror="this.style.display=\'none\'">':'')+
         '<div class="q">'+(cloze?renderCloze(f.f):esc(f.f))+'</div>'+
         '<button class="tts" onclick="event.stopPropagation();speak()">🔊</button>'+
+        '<button class="starbtn'+(c.star?' on':'')+'" id="cardStar" onclick="event.stopPropagation();toggleStarCurrent()" title="★">★</button>'+
         (swipeable?'<div class="swipehint">👆 '+esc(t('swipe_hint'))+'</div>':'')+
         '<div class="hint">'+(c.type==='input'?'⌨️':esc(t('hint')))+'</div>'+
         '<span class="swipebadge" id="sbL" style="background:var(--bad);color:#fff">AGAIN</span>'+
@@ -1842,10 +1925,10 @@ function renderReview(){
     (showTA?'<input class="answerinput" id="ansInput" placeholder="'+esc(t('type_ans'))+'" onkeydown="if(event.key===\'Enter\')checkInput()"><button class="checkbtn" onclick="checkInput()">'+esc(t('check'))+'</button>':'')+
     '<button class="showbtn" id="showBtn" onclick="flip()">'+esc(t('show'))+'</button>'+
     '<div class="ratebtns" id="rateBtns" style="display:none">'+
-      '<button class="r-again" onclick="rate(1)">Again<small id="pAgain"></small></button>'+
-      '<button class="r-hard" onclick="rate(2)">Hard<small id="pHard"></small></button>'+
-      '<button class="r-good" onclick="rate(3)">Good<small id="pGood"></small></button>'+
-      '<button class="r-easy" onclick="rate(4)">Easy<small id="pEasy"></small></button></div>';
+      '<button class="r-again" data-key="1" onclick="rate(1)">'+esc(t('btn_again'))+'<small id="pAgain"></small></button>'+
+      '<button class="r-hard" data-key="2" onclick="rate(2)">'+esc(t('btn_hard'))+'<small id="pHard"></small></button>'+
+      '<button class="r-good" data-key="3" onclick="rate(3)">'+esc(t('btn_good'))+'<small id="pGood"></small></button>'+
+      '<button class="r-easy" data-key="4" onclick="rate(4)">'+esc(t('btn_easy'))+'<small id="pEasy"></small></button></div>';
   attachSwipe();
   const fcEl=document.getElementById('fc');
   if(fcEl&&db.settings.anim&&!RM)fcEl.classList.add('cardIn');
@@ -1925,6 +2008,11 @@ function rate(g){
     const snapshot=JSON.parse(JSON.stringify(c));snapshot.hist=[];
     const logIdx=db.log.length;
     review(c,g);fsrsTrain(prevR,g);
+    /* v4.9: ли́чи как в Anki — после 4 провалов карточка получает тег «трудная» */
+    if(g===1&&(c.lapses||0)>=4&&!(c.tags||[]).includes(lang==='ru'?'трудная':'leech')){
+      c.tags=(c.tags||[]).concat([lang==='ru'?'трудная':'leech']);
+      toast('🩹 '+t('leech_tag'));
+    }
     db.log.push({t:Date.now(),deck:item.d.id,g,r:prevR,iv:Math.round(nextInterval(c)),el:el,s:s0});
     if(db.log.length>5000)db.log=db.log.slice(-5000);
     lastReview=examMode?null:{card:c,snapshot,logIdx};
@@ -2041,13 +2129,26 @@ function renderStatsGridOnly(){
   renderBrainAge();renderAch();
   const all=db.decks.flatMap(d=>d.cards);
   const retention=db.log.length?Math.round(db.log.filter(l=>l.g>1).length/db.log.length*100):0;
-  document.getElementById('statGrid').innerHTML=[
+  const cells=[
     [all.length,t('st_total')],[all.filter(c=>c.state==='new').length,t('d_new')],
     [all.filter(c=>c.state==='review').length,t('d_rot2')],
     [all.filter(c=>c.state==='review'&&c.s>=21).length,t('d_mature')],
     [allDueCards().length,t('d_due')],[retention+'%',t('d_ret')],
     [db.log.length,t('d_reps')],[db.gamif.xp+' · '+fmt(t('st_xp'),{l:level()}),'']
-  ].map(([v,l])=>'<div class="stat"><b>'+v+'</b><span>'+esc(l)+'</span></div>').join('');
+  ];
+  document.getElementById('statGrid').innerHTML=cells.map(([v,l])=>'<div class="stat"><b data-count="'+v+'">'+v+'</b><span>'+esc(l)+'</span></div>').join('');
+  /* v4.9: count-up цифр — числа «набегают» при открытии статистики */
+  if(db.settings.anim&&!RM){
+    document.querySelectorAll('#statGrid b[data-count]').forEach(el=>{
+      const raw=el.dataset.count,m=raw.match(/^(\d+)(.*)$/);if(!m)return;
+      const target=+m[1],suf=m[2],t0=performance.now(),dur=650;
+      (function tick(t){
+        const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
+        el.textContent=Math.round(target*e)+suf;
+        if(p<1)requestAnimationFrame(tick);
+      })(t0);
+    });
+  }
 }
 function renderWeak(){
   const all=db.decks.flatMap(d=>d.cards.map(c=>({c,d})));
@@ -2362,7 +2463,12 @@ function mmStart(){
   const picks=src.slice().sort(()=>Math.random()-.5).slice(0,8);
   mm.cards=picks.flatMap((c,i)=>[{k:i,side:'q',txt:c.f},{k:i,side:'a',txt:c.b}]).sort(()=>Math.random()-.5);
   mm.open=[];mm.moves=0;mm.matched=0;mm.total=8;mm.lock=false;mm.t0=Date.now();
-  area.innerHTML='<div class="mmeta" id="mmMeta"></div><div class="mmgrid">'+
+  let bestHtml='';
+  try{
+    const best=JSON.parse(localStorage.getItem('mf-mm-best')||'null');
+    if(best)bestHtml=' · '+fmt(t('g3_best'),{n:best.sec,m:best.moves});
+  }catch(e){}
+  area.innerHTML='<div class="mmeta" id="mmMeta">'+bestHtml+'</div><div class="mmgrid">'+
     mm.cards.map((c,i)=>'<div class="mmcard" id="mmc'+i+'" onclick="mmFlip('+i+')"><div class="mmin"><div class="mmface front">?</div><div class="mmface back">'+esc(c.txt)+'</div></div></div>').join('')+
     '</div><div class="gbtns"><button class="ghost" onclick="mmStart()">'+esc(t('g3_start'))+'</button></div>';
   mm.timer=setInterval(mmTick,500);mmTick();
@@ -2387,10 +2493,20 @@ function mmFlip(i){
     mm.open=[];haptic(25);mmTick();
     if(mm.matched===mm.total){
       clearInterval(mm.timer);
+      const sec=Math.round((Date.now()-mm.t0)/1000);
+      /* v4.9: личный рекорд игры */
+      let bestTxt='';
+      try{
+        const best=JSON.parse(localStorage.getItem('mf-mm-best')||'null');
+        if(!best||sec<best.sec||(sec===best.sec&&mm.moves<best.moves)){
+          localStorage.setItem('mf-mm-best',JSON.stringify({sec:sec,moves:mm.moves}));
+          bestTxt=' 🏆';
+        }
+      }catch(e){}
       const bonus=mm.moves<=12?30:mm.moves<=16?20:10;
       grantXP(bonus);
       const el2=document.getElementById('mmMeta');
-      if(el2)el2.innerHTML=t('g3_win')+' <b>+'+bonus+' XP</b> · '+fmt(t('g3_moves'),{n:mm.moves});
+      if(el2)el2.innerHTML=t('g3_win')+' <b>+'+bonus+' XP</b> · '+fmt(t('g3_moves'),{n:mm.moves})+' · '+fmt(t('g3_time'),{n:sec})+bestTxt;
       toast(t('g3_win'));
     }
   }else{
