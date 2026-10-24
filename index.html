@@ -480,6 +480,7 @@ nav{backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
   </div>
   <div class="panel"><h3 data-i18n="fc_h3">📅 Прогноз нагрузки (7 дней)</h3><canvas id="fcCanvas" height="170"></canvas></div>
   <div class="panel"><h3 data-i18n="curve_h3">📉 Кривая силы памяти (твоя)</h3><canvas id="curveCanvas" height="220"></canvas><p id="curveHint" style="color:var(--muted);font-size:12px;margin-top:8px"></p></div>
+  <div class="panel"><h3 data-i18n="games_rec">🎮 Игровые рекорды</h3><div id="gameRecs" style="display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px"></div></div>
   <div class="panel"><h3 data-i18n="weak_h3">⚠️ Слабые места</h3><div id="weakList"></div></div>
   <div class="panel"><h3 data-i18n="ach_h3">🏆 Достижения</h3><div class="achgrid" id="achGrid"></div></div>
   <div class="panel"><h3 data-i18n="heat_h3">🔥 Активность за год</h3><canvas id="heatCanvas" height="140" style="width:100%;display:block"></canvas></div>
@@ -530,6 +531,7 @@ nav{backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
     <div><input id="aiModel" placeholder="gpt-4o-mini" oninput="saveAISettings()"></div></div>
     <label>API key</label><input id="aiKey" type="password" placeholder="sk-…" oninput="saveAISettings()">
     <div class="settingsrow"><div><div class="sl" data-i18n="set_notif">🔔 Напоминания</div><div class="sd" data-i18n="set_notif_d">Уведомление о карточках к повторению, пока сайт открыт в фоне</div></div><button class="ghost" onclick="toggleNotif()" id="notifBtn">OFF</button></div>
+    <div class="settingsrow"><div><div class="sl" data-i18n="set_pwa">📲 Установить приложение</div><div class="sd" data-i18n="set_pwa_d">Добавит MemFlow как отдельное окно (PWA)</div></div><button class="ghost" onclick="setPwaInstall()" id="pwaInstallBtn" style="display:none">📲</button></div>
   </div>
   <div class="panel">
     <h3 data-i18n="set_backup">💾 Бэкапы</h3>
@@ -729,6 +731,8 @@ set_inter:"🧩 Интерливинг",set_inter_d:"Карточки разны
 inter_on:"🧩 Интерливинг вкл",inter_off:"🧩 Интерливинг выкл",
 set_sound:"🔊 Звуковой отклик",set_sound_d:"Короткие сигналы верно/неверно (WebAudio, без файлов)",
 set_notif:"🔔 Напоминания",set_notif_d:"Уведомление о карточках к повторению, пока сайт открыт в фоне",
+set_pwa:"📲 Установить приложение",set_pwa_d:"Добавит MemFlow как отдельное окно (PWA)",
+games_rec:"🎮 Игровые рекорды",g_rec_duel:"⚔️ Побед в дуэли: <b>{n}</b>",g_rec_bub:"🫧 Лучшие пузырьки: <b>{n}</b>",g_rec_mm:"🧩 Рекорд «Найди пару»: <b>{n} сек</b>",
 notif_on:"🔔 Напоминания вкл",notif_off:"🔔 Напоминания выкл",notif_body:"{n} карточек ждут повторения 🧠",
 tr_ok:"Переведено: {n} → «{d}»",tr_gen:"Перевожу через ИИ…",
 snd_on:"🔊 Звук вкл",snd_off:"🔊 Звук выкл",
@@ -846,6 +850,8 @@ set_inter:"🧩 Interleaving",set_inter_d:"Cards from different topics mixed, no
 inter_on:"🧩 Interleaving on",inter_off:"🧩 Interleaving off",
 set_sound:"🔊 Sound feedback",set_sound_d:"Short right/wrong beeps (WebAudio, no files)",
 set_notif:"🔔 Reminders",set_notif_d:"Notification about due cards while the site runs in background",
+set_pwa:"📲 Install app",set_pwa_d:"Adds MemFlow as a separate window (PWA)",
+games_rec:"🎮 Game records",g_rec_duel:"⚔️ Duel wins: <b>{n}</b>",g_rec_bub:"🫧 Best bubbles: <b>{n}</b>",g_rec_mm:"🧩 Match best: <b>{n} s</b>",
 notif_on:"🔔 Reminders on",notif_off:"🔔 Reminders off",notif_body:"{n} cards are waiting 🧠",
 tr_ok:"Translated: {n} → “{d}”",tr_gen:"Translating via AI…",
 snd_on:"🔊 Sound on",snd_off:"🔊 Sound off",
@@ -946,9 +952,9 @@ es:{leech_tag:"Tarjeta marcada como «difícil» — repásala más a menudo",st
 zh:{leech_tag:"卡片已标记为「难记」——请多复习",star_only:"⭐ 收藏",g3_best:"纪录：{n} 秒 · {m} 步"},
 hi:{leech_tag:"कार्ड «कठिन» चिह्नित — इसे और दोहराएँ",star_only:"⭐ पसंदीदा",g3_best:"रिकॉर्ड: {n} से · {m} चालें"}
 };
-Object.assign(ES,I18N_X.es||{},I18N_X2.es||{},{btn_again:"Otra vez",btn_hard:"Difícil",btn_good:"Bien",btn_easy:"Fácil",t_all:"Todos los estados"});
-Object.assign(ZH,I18N_X.zh||{},I18N_X2.zh||{},{btn_again:"忘记",btn_hard:"较难",btn_good:"良好",btn_easy:"简单",t_all:"全部状态"});
-Object.assign(HI,I18N_X.hi||{},I18N_X2.hi||{},{btn_again:"फिर से",btn_hard:"कठिन",btn_good:"अच्छा",btn_easy:"आसान",t_all:"सभी स्थितियाँ"});
+Object.assign(ES,I18N_X.es||{},I18N_X2.es||{},{btn_again:"Otra vez",btn_hard:"Difícil",btn_good:"Bien",btn_easy:"Fácil",t_all:"Todos los estados",set_pwa:"📲 Instalar aplicación",set_pwa_d:"Añade MemFlow como ventana aparte (PWA)",games_rec:"🎮 Récords de juegos",g_rec_duel:"⚔️ Duelos ganados: <b>{n}</b>",g_rec_bub:"🫧 Mejores burbujas: <b>{n}</b>",g_rec_mm:"🧩 Mejor parejas: <b>{n} s</b>"});
+Object.assign(ZH,I18N_X.zh||{},I18N_X2.zh||{},{btn_again:"忘记",btn_hard:"较难",btn_good:"良好",btn_easy:"简单",t_all:"全部状态",set_pwa:"📲 安装应用",set_pwa_d:"把 MemFlow 添加为独立窗口（PWA）",games_rec:"🎮 游戏纪录",g_rec_duel:"⚔️ 对决获胜：<b>{n}</b>",g_rec_bub:"🫧 泡泡最佳：<b>{n}</b>",g_rec_mm:"🧩 配对纪录：<b>{n} 秒</b>"});
+Object.assign(HI,I18N_X.hi||{},I18N_X2.hi||{},{btn_again:"फिर से",btn_hard:"कठिन",btn_good:"अच्छा",btn_easy:"आसान",t_all:"सभी स्थितियाँ",set_pwa:"📲 ऐप इंस्टॉल करें",set_pwa_d:"MemFlow को अलग विंडो (PWA) के रूप में जोड़े",games_rec:"🎮 गेम रिकॉर्ड",g_rec_duel:"⚔️ ड्यूल जीत: <b>{n}</b>",g_rec_bub:"🫧 बेहतरीन बुलबुले: <b>{n}</b>",g_rec_mm:"🧩 मैच रिकॉर्ड: <b>{n} से</b>"});
 const LANGS={ru:RU,en:EN,es:ES,zh:ZH,hi:HI};
 let lang=localStorage.getItem('mf-lang')||'ru';
 function t(k){const d=LANGS[lang];return(d[k]!==undefined?d[k]:EN[k]!==undefined?EN[k]:k)}
@@ -961,6 +967,7 @@ let db=store.load()||{decks:[],log:[],settings:Object.assign({},DEF_SET),fsrs:{m
 db.settings=Object.assign({},DEF_SET,db.settings||{});
 db.fsrs=db.fsrs||{mult:1,decayAdj:0,trained:0};
 db.gamif=db.gamif||{xp:0,ach:[],dayStreak:0,lastDay:0,freezes:1};
+db.gamif.games=db.gamif.games||{duelWins:0,bestBub:0};
 /* v4.8: корзина удалённых колод — хранится 30 дней, потом вычищается */
 db.trash=(db.trash||[]).filter(x=>x&&x.deck&&Array.isArray(x.deck.cards)&&Date.now()-(x.deletedAt||0)<30*86400000);
 /* seq учитывает id колод и карточек, в т.ч. лежащих в корзине, чтобы при восстановлении не было коллизий id */
@@ -1808,7 +1815,9 @@ function interleaveQueue(q){
 }
 function allDueCards(){const now=Date.now(),out=[];
   db.decks.forEach(d=>d.cards.forEach(c=>{if(c.state==='new'||c.due<=now)out.push({c,d})}));return out}
-function updateNavBadge(){const n=allDueCards().length,b=document.getElementById('navDue');b.textContent=n;b.style.display=n?'':'none'}
+function updateNavBadge(){const n=allDueCards().length,b=document.getElementById('navDue');b.textContent=n;b.style.display=n?'':'none';
+  /* v4.9.1: бейдж due прямо в заголовке вкладки */
+  document.title=(n?'('+n+') ':'')+(lang==='ru'?'MemFlow — умные карточки':'MemFlow — smart flashcards')}
 function startGlobalReview(){go('review');cramMode=false;queue=allDueCards();beginSession()}
 function startReview(deckId,tag){go('review');cramMode=false;
   const d=db.decks.find(x=>x.id===deckId),now=Date.now();
@@ -2127,6 +2136,15 @@ function confetti(){
 /* ============ статистика ============ */
 function renderStatsGridOnly(){
   renderBrainAge();renderAch();
+  /* v4.9.1: панель игровых рекордов */
+  const gr=document.getElementById('gameRecs');
+  if(gr){
+    let mmBest=null;
+    try{mmBest=JSON.parse(localStorage.getItem('mf-mm-best')||'null')}catch(e){}
+    gr.innerHTML='<span>'+fmt(t('g_rec_duel'),{n:db.gamif.games.duelWins||0})+'</span>'+
+      '<span>'+fmt(t('g_rec_bub'),{n:db.gamif.games.bestBub||0})+'</span>'+
+      '<span>'+fmt(t('g_rec_mm'),{n:mmBest?mmBest.sec:'—'})+'</span>';
+  }
   const all=db.decks.flatMap(d=>d.cards);
   const retention=db.log.length?Math.round(db.log.filter(l=>l.g>1).length/db.log.length*100):0;
   const cells=[
@@ -2354,6 +2372,7 @@ function duelNext(){
   clearTimeout(duel.botTimer);clearTimeout(duel.skipTimer);
   if(duel.round>=10){
     const res=duel.me>duel.bot?t('g1_win'):duel.me<duel.bot?t('g1_lose'):t('g1_tie');
+    if(duel.me>duel.bot){db.gamif.games.duelWins++;persist()}
     area.innerHTML='<div class="duelfx">'+esc(res)+'</div><div style="font-size:16px">🧑 '+duel.me+' : '+duel.bot+' 🤖</div>'+
       '<div class="gbtns"><button class="ghost" onclick="duelStart()">'+esc(t('g1_start'))+'</button></div>';
     document.getElementById('duelScore').textContent='';
@@ -2413,6 +2432,8 @@ function bubblesStart(){
   const bs=Array.from({length:14},spawnB);
   bubbles.end=setTimeout(()=>{
     bubbles.on=false;cancelAnimationFrame(bubbles.raf);
+    /* v4.9.1: рекорд пузырьков */
+    if(bubbles.score>db.gamif.games.bestBub){db.gamif.games.bestBub=bubbles.score;persist()}
     area.innerHTML='<div class="duelfx">🫧</div><div class="gscore">'+fmt(t('g2_score'),{n:bubbles.score})+'</div><div class="gbtns"><button class="ghost" onclick="bubblesStart()">'+esc(t('g2_start'))+'</button></div>';
     grantXP(10);
   },30000);
@@ -2798,7 +2819,16 @@ function setLang(l){
   if('serviceWorker' in navigator&&location.protocol==='https:'){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
+  /* v4.9.1: кнопка установки PWA */
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();window._pwaEvent=e;
+    const b=document.getElementById('pwaInstallBtn');if(b)b.style.display='';
+  });
 })();
+function setPwaInstall(){
+  if(window._pwaEvent){window._pwaEvent.prompt();window._pwaEvent=null;
+    const b=document.getElementById('pwaInstallBtn');if(b)b.style.display='none'}
+}
 
 /* ============ seed ============ */
 if(!localStorage.getItem('memflow-seeded')){
