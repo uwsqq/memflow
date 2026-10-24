@@ -1,5 +1,5 @@
 /* MemFlow service worker — офлайн-кэш для PWA (подключается при хостинге по https) */
-const CACHE='memflow-v4.8';
+const CACHE='memflow-v4.9';
 const ASSETS=['./','./index.html'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
