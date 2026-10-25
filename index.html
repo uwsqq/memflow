@@ -506,7 +506,7 @@ nav{backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
       <select style="width:auto" id="taMode" onchange="setTypeAnswer(this.value)"><option value="always" data-i18n="set_ta_all">Всегда</option><option value="off" data-i18n="set_ta_off">Выкл</option></select></div>
     <div class="settingsrow"><div><div class="sl" data-i18n="set_sleep">🌙 Sleep-aware</div><div class="sd" data-i18n="set_sleep_d">После 22:00 интервалы ×1.1 — память консолидируется во сне</div></div>
       <button class="ghost" onclick="toggleSleep()" id="sleepBtn">ON</button></div>
-    <div class="settingsrow"><div><div class="sl" data-i18n="set_fsrs">🧬 FSRS-оптимизатор</div><div class="sd" id="fsrsInfo"></div></div></div>
+    <div class="settingsrow"><div><div class="sl" data-i18n="set_fsrs">🧬 FSRS-оптимизатор</div><div class="sd" id="fsrsInfo"></div></div><button class="ghost" onclick="runFsrsOptimize()" data-i18n="fsrs_opt">⚙️ Оптимизировать</button></div>
   </div>
   <div class="panel">
     <h3 data-i18n="set_theme">🎨 Оформление</h3>
@@ -782,6 +782,7 @@ st_total:"всего карточек",d_new:"новых",d_rot2:"в ротац�
 d_ret:"удержание",d_reps:"повторений",st_age:"возраст мозга",st_xp:"XP · ур. {l}",
 weak_empty:"Проблемных карточек нет 💪",weak_hint:"💡 сократи",
 fsrs_info:"Обучено на {n} повторениях",fsrs_new:"Нет данных — стандартные параметры",
+fsrs_opt:"⚙️ Оптимизировать",opt_ok:"FSRS оптимизирован на {n} повторениях ✓",opt_little:"Мало данных — нужно ≥20 повторений",ahead_tt:"Изучить вперёд: 10 ближайших карточек",
 curve_l1:"слабая",curve_l2:"средняя",curve_l3:"зрелая",curve_yours:"твоя",curve_goal:"цель",
 swipe_hint:"свайп: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"Первый шаг",hundred:"Сотня",streak7:"Неделя огня",xp1000:"1000 XP",cram:"Зубрёжка",alltag:"Библиотекарь",duel:"Дуэлянт",turbo:"Турбо"},
@@ -901,6 +902,7 @@ st_total:"total cards",d_new:"new",d_rot2:"in rotation",d_mature:"mature",d_due:
 d_ret:"retention",d_reps:"reviews",st_age:"brain age",st_xp:"XP · lvl {l}",
 weak_empty:"No problem cards 💪",weak_hint:"💡 shorten",
 fsrs_info:"Trained on {n} reviews",fsrs_new:"No data — default parameters",
+fsrs_opt:"⚙️ Optimize",opt_ok:"FSRS optimized on {n} reviews ✓",opt_little:"Not enough data — need ≥20 reviews",ahead_tt:"Study ahead: next 10 cards",
 curve_l1:"weak",curve_l2:"medium",curve_l3:"mature",curve_yours:"yours",curve_goal:"goal",
 swipe_hint:"swipe: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"First step",hundred:"Century",streak7:"Week of fire",xp1000:"1000 XP",cram:"Crammer",alltag:"Librarian",duel:"Duelist",turbo:"Turbo"},
@@ -952,9 +954,9 @@ es:{leech_tag:"Tarjeta marcada como «difícil» — repásala más a menudo",st
 zh:{leech_tag:"卡片已标记为「难记」——请多复习",star_only:"⭐ 收藏",g3_best:"纪录：{n} 秒 · {m} 步"},
 hi:{leech_tag:"कार्ड «कठिन» चिह्नित — इसे और दोहराएँ",star_only:"⭐ पसंदीदा",g3_best:"रिकॉर्ड: {n} से · {m} चालें"}
 };
-Object.assign(ES,I18N_X.es||{},I18N_X2.es||{},{btn_again:"Otra vez",btn_hard:"Difícil",btn_good:"Bien",btn_easy:"Fácil",t_all:"Todos los estados",set_pwa:"📲 Instalar aplicación",set_pwa_d:"Añade MemFlow como ventana aparte (PWA)",games_rec:"🎮 Récords de juegos",g_rec_duel:"⚔️ Duelos ganados: <b>{n}</b>",g_rec_bub:"🫧 Mejores burbujas: <b>{n}</b>",g_rec_mm:"🧩 Mejor parejas: <b>{n} s</b>"});
-Object.assign(ZH,I18N_X.zh||{},I18N_X2.zh||{},{btn_again:"忘记",btn_hard:"较难",btn_good:"良好",btn_easy:"简单",t_all:"全部状态",set_pwa:"📲 安装应用",set_pwa_d:"把 MemFlow 添加为独立窗口（PWA）",games_rec:"🎮 游戏纪录",g_rec_duel:"⚔️ 对决获胜：<b>{n}</b>",g_rec_bub:"🫧 泡泡最佳：<b>{n}</b>",g_rec_mm:"🧩 配对纪录：<b>{n} 秒</b>"});
-Object.assign(HI,I18N_X.hi||{},I18N_X2.hi||{},{btn_again:"फिर से",btn_hard:"कठिन",btn_good:"अच्छा",btn_easy:"आसान",t_all:"सभी स्थितियाँ",set_pwa:"📲 ऐप इंस्टॉल करें",set_pwa_d:"MemFlow को अलग विंडो (PWA) के रूप में जोड़े",games_rec:"🎮 गेम रिकॉर्ड",g_rec_duel:"⚔️ ड्यूल जीत: <b>{n}</b>",g_rec_bub:"🫧 बेहतरीन बुलबुले: <b>{n}</b>",g_rec_mm:"🧩 मैच रिकॉर्ड: <b>{n} से</b>"});
+Object.assign(ES,I18N_X.es||{},I18N_X2.es||{},{btn_again:"Otra vez",btn_hard:"Difícil",btn_good:"Bien",btn_easy:"Fácil",t_all:"Todos los estados",set_pwa:"📲 Instalar aplicación",set_pwa_d:"Añade MemFlow como ventana aparte (PWA)",games_rec:"🎮 Récords de juegos",g_rec_duel:"⚔️ Duelos ganados: <b>{n}</b>",g_rec_bub:"🫧 Mejores burbujas: <b>{n}</b>",g_rec_mm:"🧩 Mejor parejas: <b>{n} s</b>",fsrs_opt:"⚙️ Optimizar",opt_ok:"FSRS optimizado con {n} repeticiones ✓",opt_little:"Pocos datos — se necesitan ≥20 repeticiones",ahead_tt:"Adelantar: las 10 próximas tarjetas"});
+Object.assign(ZH,I18N_X.zh||{},I18N_X2.zh||{},{btn_again:"忘记",btn_hard:"较难",btn_good:"良好",btn_easy:"简单",t_all:"全部状态",set_pwa:"📲 安装应用",set_pwa_d:"把 MemFlow 添加为独立窗口（PWA）",games_rec:"🎮 游戏纪录",g_rec_duel:"⚔️ 对决获胜：<b>{n}</b>",g_rec_bub:"🫧 泡泡最佳：<b>{n}</b>",g_rec_mm:"🧩 配对纪录：<b>{n} 秒</b>",fsrs_opt:"⚙️ 优化",opt_ok:"已用 {n} 次复习优化 FSRS ✓",opt_little:"数据不足——至少需要 20 次复习",ahead_tt:"提前学：接下来 10 张"});
+Object.assign(HI,I18N_X.hi||{},I18N_X2.hi||{},{btn_again:"फिर से",btn_hard:"कठिन",btn_good:"अच्छा",btn_easy:"आसान",t_all:"सभी स्थितियाँ",set_pwa:"📲 ऐप इंस्टॉल करें",set_pwa_d:"MemFlow को अलग विंडो (PWA) के रूप में जोड़े",games_rec:"🎮 गेम रिकॉर्ड",g_rec_duel:"⚔️ ड्यूल जीत: <b>{n}</b>",g_rec_bub:"🫧 बेहतरीन बुलबुले: <b>{n}</b>",g_rec_mm:"🧩 मैच रिकॉर्ड: <b>{n} से</b>",fsrs_opt:"⚙️ ऑप्टिमाइज़",opt_ok:"{n} रिव्यू पर FSRS ऑप्टिमाइज़ ✓",opt_little:"डेटा कम — ≥20 रिव्यू चाहिए",ahead_tt:"आगे सीखें: अगले 10 कार्ड"});
 const LANGS={ru:RU,en:EN,es:ES,zh:ZH,hi:HI};
 let lang=localStorage.getItem('mf-lang')||'ru';
 function t(k){const d=LANGS[lang];return(d[k]!==undefined?d[k]:EN[k]!==undefined?EN[k]:k)}
@@ -1314,6 +1316,28 @@ function fsrsTrain(prevR,grade){
   f.calB=clamp(f.calB-lr*(p-y)*z,.4,2.2);
   f.trained++;
 }
+/* v4.10: батч-оптимизатор FSRS по истории повторений —
+   30 эпох SGD по calA/calB на всём логе + коррекция множителей Hard/Easy (w15/w16) */
+function fsrsOptimize(){
+  const L=db.log.filter(l=>l.r>0&&l.r<1);
+  if(L.length<20)return null;
+  const f=db.fsrs,eps=30,lr0=.10;
+  for(let e=0;e<eps;e++){
+    const lr=lr0*(1-e/eps)+.01;
+    let gA=0,gB=0;
+    for(const l of L){
+      const z=logit(l.r),p=sigmoid(f.calA+f.calB*z),y=l.g>1?1:0;
+      gA+=p-y;gB+=(p-y)*z;
+    }
+    f.calA=clamp(f.calA-lr*gA/L.length,-1.5,1.5);
+    f.calB=clamp(f.calB-lr*gB/L.length,.4,2.2);
+  }
+  /* v4.10.1: коррекция w15/w16 по логу невозможна (в логе нет id карт и прошлых оценок) —
+     оптимизируем только калибровку Platt (calA/calB), она честно считаема из {r,g} */
+  f.optRuns=(f.optRuns||0)+1;
+  persist();
+  return {n:L.length,a:f.calA,b:f.calB};
+}
 function review(card,grade,now=Date.now()){
   grade=Math.max(1,Math.min(4,grade));
   const w=W(),r=retrievability(card,now);
@@ -1610,7 +1634,8 @@ function renderDecks(){
       '<div class="meta"><span>🗂 '+total+'</span><span>🧠 '+Math.round(total?learned/total*100:0)+'%</span></div>'+
       '<div class="bar"><i style="width:'+(total?learned/total*100:0)+'%"></i></div>'+
       '<div class="actions"><button class="learn" onclick="startReview('+d.id+')">'+t('learn')+'</button>'+
-      '<button onclick="startCram('+d.id+')">'+t('cram')+'</button>'+
+      '<button onclick="startCram('+d.id+')" title="'+esc(t('cram_on'))+'">⚡</button>'+
+      '<button onclick="startAhead('+d.id+')" title="'+esc(t('ahead_tt'))+'">⏩</button>'+
       '<button onclick="startExam('+d.id+')">📝</button>'+
       '<button class="iconbtn" title="AI translate" onclick="translateDeck('+d.id+')">🌐</button>'+
       '<button onclick="viewCardsMorph('+d.id+',this)">'+t('list')+'</button>'+
@@ -1826,6 +1851,15 @@ function startReview(deckId,tag){go('review');cramMode=false;
 function startCram(deckId){go('review');cramMode=true;grantAch('cram');toast(t('cram_on'));
   applyModeClasses();modeFlash();
   const d=db.decks.find(x=>x.id===deckId);queue=d.cards.map(c=>({c,d}));beginSession()}
+/* v4.10: «изучить вперёд» (Anki custom study) — 10 ближайших будущих карточек, расписание не трогаем */
+function startAhead(deckId){
+  const d=db.decks.find(x=>x.id===deckId),now=Date.now();
+  queue=d.cards.filter(c=>c.state==='review'&&c.due>now).sort((a,b)=>a.due-b.due).slice(0,10).map(c=>({c,d}));
+  if(!queue.length){toast('✓ '+t('to_all'));return}
+  go('review');cramMode=true;
+  applyModeClasses();modeFlash();
+  beginSession();
+}
 /* экзаменационный вариант: 10 случайных карточек, ввод ответа, авто-оценка, итог 5–2 */
 function startExam(deckId){
   go('review');examMode=true;cramMode=true;
@@ -2347,8 +2381,15 @@ function renderSettingsPage(){
   document.getElementById('dailyGoal').value=db.settings.dailyGoal||30;
   const gs=document.getElementById('gradeSel');if(gs)gs.value=String(db.settings.grade||0);
   document.getElementById('fsrsInfo').textContent=db.fsrs.trained
-    ?'FSRS-17 · калибровка a='+db.fsrs.calA.toFixed(2)+' b='+db.fsrs.calB.toFixed(2)+' · '+fmt(t('fsrs_info'),{n:db.fsrs.trained})
-    :t('fsrs_new');
+    ?'FSRS-17 · калибровка a='+db.fsrs.calA.toFixed(2)+' b='+db.fsrs.calB.toFixed(2)+' · '+fmt(t('fsrs_info'),{n:db.fsrs.trained})+(db.fsrs.optRuns?' · opt×'+db.fsrs.optRuns:'')
+    :t('fsrs_new')+(db.fsrs.optRuns?' · opt×'+db.fsrs.optRuns:'');
+}
+/* v4.10: запуск батч-оптимизации из настроек */
+function runFsrsOptimize(){
+  const res=fsrsOptimize();
+  if(!res){toast(t('opt_little'));return}
+  toast(fmt(t('opt_ok'),{n:res.n}));
+  renderSettingsPage();
 }
 function toggleDefaultTurbo(){db.settings.turbo=!db.settings.turbo;persist();
   const b=document.getElementById('turboDefBtn');if(b)b.textContent=db.settings.turbo?'ON':'OFF'}
