@@ -783,6 +783,7 @@ d_ret:"удержание",d_reps:"повторений",st_age:"возраст 
 weak_empty:"Проблемных карточек нет 💪",weak_hint:"💡 сократи",
 fsrs_info:"Обучено на {n} повторениях",fsrs_new:"Нет данных — стандартные параметры",
 fsrs_opt:"⚙️ Оптимизировать",opt_ok:"FSRS оптимизирован на {n} повторениях ✓",opt_little:"Мало данных — нужно ≥20 повторений",ahead_tt:"Изучить вперёд: 10 ближайших карточек",
+apkg_ok:"Экспортирован .apkg: {n} карт 🗃",
 curve_l1:"слабая",curve_l2:"средняя",curve_l3:"зрелая",curve_yours:"твоя",curve_goal:"цель",
 swipe_hint:"свайп: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"Первый шаг",hundred:"Сотня",streak7:"Неделя огня",xp1000:"1000 XP",cram:"Зубрёжка",alltag:"Библиотекарь",duel:"Дуэлянт",turbo:"Турбо"},
@@ -903,6 +904,7 @@ d_ret:"retention",d_reps:"reviews",st_age:"brain age",st_xp:"XP · lvl {l}",
 weak_empty:"No problem cards 💪",weak_hint:"💡 shorten",
 fsrs_info:"Trained on {n} reviews",fsrs_new:"No data — default parameters",
 fsrs_opt:"⚙️ Optimize",opt_ok:"FSRS optimized on {n} reviews ✓",opt_little:"Not enough data — need ≥20 reviews",ahead_tt:"Study ahead: next 10 cards",
+apkg_ok:".apkg exported: {n} cards 🗃",
 curve_l1:"weak",curve_l2:"medium",curve_l3:"mature",curve_yours:"yours",curve_goal:"goal",
 swipe_hint:"swipe: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"First step",hundred:"Century",streak7:"Week of fire",xp1000:"1000 XP",cram:"Crammer",alltag:"Librarian",duel:"Duelist",turbo:"Turbo"},
@@ -954,9 +956,9 @@ es:{leech_tag:"Tarjeta marcada como «difícil» — repásala más a menudo",st
 zh:{leech_tag:"卡片已标记为「难记」——请多复习",star_only:"⭐ 收藏",g3_best:"纪录：{n} 秒 · {m} 步"},
 hi:{leech_tag:"कार्ड «कठिन» चिह्नित — इसे और दोहराएँ",star_only:"⭐ पसंदीदा",g3_best:"रिकॉर्ड: {n} से · {m} चालें"}
 };
-Object.assign(ES,I18N_X.es||{},I18N_X2.es||{},{btn_again:"Otra vez",btn_hard:"Difícil",btn_good:"Bien",btn_easy:"Fácil",t_all:"Todos los estados",set_pwa:"📲 Instalar aplicación",set_pwa_d:"Añade MemFlow como ventana aparte (PWA)",games_rec:"🎮 Récords de juegos",g_rec_duel:"⚔️ Duelos ganados: <b>{n}</b>",g_rec_bub:"🫧 Mejores burbujas: <b>{n}</b>",g_rec_mm:"🧩 Mejor parejas: <b>{n} s</b>",fsrs_opt:"⚙️ Optimizar",opt_ok:"FSRS optimizado con {n} repeticiones ✓",opt_little:"Pocos datos — se necesitan ≥20 repeticiones",ahead_tt:"Adelantar: las 10 próximas tarjetas"});
-Object.assign(ZH,I18N_X.zh||{},I18N_X2.zh||{},{btn_again:"忘记",btn_hard:"较难",btn_good:"良好",btn_easy:"简单",t_all:"全部状态",set_pwa:"📲 安装应用",set_pwa_d:"把 MemFlow 添加为独立窗口（PWA）",games_rec:"🎮 游戏纪录",g_rec_duel:"⚔️ 对决获胜：<b>{n}</b>",g_rec_bub:"🫧 泡泡最佳：<b>{n}</b>",g_rec_mm:"🧩 配对纪录：<b>{n} 秒</b>",fsrs_opt:"⚙️ 优化",opt_ok:"已用 {n} 次复习优化 FSRS ✓",opt_little:"数据不足——至少需要 20 次复习",ahead_tt:"提前学：接下来 10 张"});
-Object.assign(HI,I18N_X.hi||{},I18N_X2.hi||{},{btn_again:"फिर से",btn_hard:"कठिन",btn_good:"अच्छा",btn_easy:"आसान",t_all:"सभी स्थितियाँ",set_pwa:"📲 ऐप इंस्टॉल करें",set_pwa_d:"MemFlow को अलग विंडो (PWA) के रूप में जोड़े",games_rec:"🎮 गेम रिकॉर्ड",g_rec_duel:"⚔️ ड्यूल जीत: <b>{n}</b>",g_rec_bub:"🫧 बेहतरीन बुलबुले: <b>{n}</b>",g_rec_mm:"🧩 मैच रिकॉर्ड: <b>{n} से</b>",fsrs_opt:"⚙️ ऑप्टिमाइज़",opt_ok:"{n} रिव्यू पर FSRS ऑप्टिमाइज़ ✓",opt_little:"डेटा कम — ≥20 रिव्यू चाहिए",ahead_tt:"आगे सीखें: अगले 10 कार्ड"});
+Object.assign(ES,I18N_X.es||{},I18N_X2.es||{},{btn_again:"Otra vez",btn_hard:"Difícil",btn_good:"Bien",btn_easy:"Fácil",t_all:"Todos los estados",set_pwa:"📲 Instalar aplicación",set_pwa_d:"Añade MemFlow como ventana aparte (PWA)",games_rec:"🎮 Récords de juegos",g_rec_duel:"⚔️ Duelos ganados: <b>{n}</b>",g_rec_bub:"🫧 Mejores burbujas: <b>{n}</b>",g_rec_mm:"🧩 Mejor parejas: <b>{n} s</b>",fsrs_opt:"⚙️ Optimizar",opt_ok:"FSRS optimizado con {n} repeticiones ✓",opt_little:"Pocos datos — se necesitan ≥20 repeticiones",ahead_tt:"Adelantar: las 10 próximas tarjetas",apkg_ok:".apkg exportado: {n} tarjetas 🗃"});
+Object.assign(ZH,I18N_X.zh||{},I18N_X2.zh||{},{btn_again:"忘记",btn_hard:"较难",btn_good:"良好",btn_easy:"简单",t_all:"全部状态",set_pwa:"📲 安装应用",set_pwa_d:"把 MemFlow 添加为独立窗口（PWA）",games_rec:"🎮 游戏纪录",g_rec_duel:"⚔️ 对决获胜：<b>{n}</b>",g_rec_bub:"🫧 泡泡最佳：<b>{n}</b>",g_rec_mm:"🧩 配对纪录：<b>{n} 秒</b>",fsrs_opt:"⚙️ 优化",opt_ok:"已用 {n} 次复习优化 FSRS ✓",opt_little:"数据不足——至少需要 20 次复习",ahead_tt:"提前学：接下来 10 张",apkg_ok:"已导出 .apkg：{n} 张卡 🗃"});
+Object.assign(HI,I18N_X.hi||{},I18N_X2.hi||{},{btn_again:"फिर से",btn_hard:"कठिन",btn_good:"अच्छा",btn_easy:"आसान",t_all:"सभी स्थितियाँ",set_pwa:"📲 ऐप इंस्टॉल करें",set_pwa_d:"MemFlow को अलग विंडो (PWA) के रूप में जोड़े",games_rec:"🎮 गेम रिकॉर्ड",g_rec_duel:"⚔️ ड्यूल जीत: <b>{n}</b>",g_rec_bub:"🫧 बेहतरीन बुलबुले: <b>{n}</b>",g_rec_mm:"🧩 मैच रिकॉर्ड: <b>{n} से</b>",fsrs_opt:"⚙️ ऑप्टिमाइज़",opt_ok:"{n} रिव्यू पर FSRS ऑप्टिमाइज़ ✓",opt_little:"डेटा कम — ≥20 रिव्यू चाहिए",ahead_tt:"आगे सीखें: अगले 10 कार्ड",apkg_ok:".apkg निर्यात: {n} कार्ड 🗃"});
 const LANGS={ru:RU,en:EN,es:ES,zh:ZH,hi:HI};
 let lang=localStorage.getItem('mf-lang')||'ru';
 function t(k){const d=LANGS[lang];return(d[k]!==undefined?d[k]:EN[k]!==undefined?EN[k]:k)}
@@ -1640,7 +1642,8 @@ function renderDecks(){
       '<button class="iconbtn" title="AI translate" onclick="translateDeck('+d.id+')">🌐</button>'+
       '<button onclick="viewCardsMorph('+d.id+',this)">'+t('list')+'</button>'+
       '<button class="iconbtn" onclick="shareDeck('+d.id+')">'+t('share')+'</button>'+
-      '<button class="iconbtn" onclick="exportDeckAnki('+d.id+')">⬇</button>'+
+      '<button class="iconbtn" onclick="exportDeckAnki('+d.id+')" title="Anki txt">⬇</button>'+
+      '<button class="iconbtn" onclick="exportDeckApkg('+d.id+')" title="Anki .apkg">🗃</button>'+
       '<button class="iconbtn" onclick="askDeleteDeck('+d.id+')">🗑</button></div>';
     g.appendChild(el);
   });
@@ -2822,6 +2825,60 @@ function exportCSV(){
 }
 function exportAllAnki(){_exportAnki(db.decks,'memflow-anki-export.txt')}
 function exportDeckAnki(id){_exportAnki(db.decks.filter(d=>d.id===id),'anki-deck.txt')}
+/* ============ v4.10: экспорт в .apkg (настоящий Anki-файл: sqlite collection.anki2 в zip) ============ */
+async function buildApkg(decks){
+  if(!window.JSZip)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+  if(!window.initSqlJs)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js');
+  const SQL=await initSqlJs({locateFile:x=>'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/'+x});
+  const sq=new SQL.Database();
+  sq.run(`CREATE TABLE col (id integer primary key, crt integer not null, mod integer not null, scm integer not null, ver integer not null, dty integer not null, usn integer not null, ls integer not null, conf text not null, models text not null, decks text not null, dconf text not null, tags text not null);
+CREATE TABLE notes (id integer primary key, guid text not null, mid integer not null, mod integer not null, usn integer not null, tags text not null, flds text not null, sfld integer not null, csum integer not null, flags integer not null, data text not null);
+CREATE TABLE cards (id integer primary key, nid integer not null, did integer not null, ord integer not null, mod integer not null, usn integer not null, type integer not null, queue integer not null, due integer not null, ivl integer not null, factor integer not null, reps integer not null, lapses integer not null, left integer not null, odue integer not null, odid integer not null, flags integer not null, data text not null);
+CREATE TABLE revlog (id integer primary key, cid integer not null, usn integer not null, ease integer not null, ivl integer not null, lastIvl integer not null, factor integer not null, time integer not null, type integer not null);
+CREATE TABLE graves (usn integer not null, oid integer not null, type integer not null);`);
+  const now=Date.now(),dayStart=new Date();dayStart.setHours(4,0,0,0);
+  const mid=now,did=now+1;
+  const model={id:mid,name:'Basic',type:0,mod:Math.floor(now/1000),usn:-1,sortf:0,did:did,tmpls:[{name:'Card 1',ord:0,qfmt:'{{Front}}',afmt:'{{FrontSide}}<hr id=answer>{{Back}}',bqfmt:'',bafmt:'',did:null,bflg:0}],flds:[{name:'Front',ord:0,sticky:false,rtl:false,font:'Arial',size:20,media:[]},{name:'Back',ord:1,sticky:false,rtl:false,font:'Arial',size:20,media:[]}],css:'.card{font-family:arial;font-size:20px;text-align:center;color:black;background-color:white}',latexPre:'\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',latexPost:'\\end{document}',latexsvg:false,req:[[0,'any',[0]]],vers:[]};
+  const deckObjs={'1':{id:1,name:'Default',mod:Math.floor(now/1000),usn:-1,lrnToday:[0,0],revToday:[0,0],newToday:[0,0],timeToday:[0,0],collapsed:false,browserCollapsed:false,desc:'',dyn:0,conf:1,extendNew:0,extendRev:0}};
+  decks.forEach(d=>{deckObjs[String(did+decks.indexOf(d))]={id:did+decks.indexOf(d),name:d.name.replace(/[:\"{}]/g,' ').slice(0,80)||'Deck',mod:Math.floor(now/1000),usn:-1,lrnToday:[0,0],revToday:[0,0],newToday:[0,0],timeToday:[0,0],collapsed:false,browserCollapsed:false,desc:'',dyn:0,conf:1,extendNew:0,extendRev:0}});
+  const conf={nextPos:1,sortType:'noteFld',sortBackwards:false,addToCur:true,curDeck:1,newSpread:0,collapseTime:1200,timeLim:0,estTimes:true,activeDecks:[1],sortOrder:1,curModel:String(mid),dueCounts:true};
+  const dconf={'1':{id:1,name:'Default',reps:[0,0],revToday:[0,0],lrnToday:[0,0],newToday:[0,0],timeToday:[0,0],collapsed:false,conf:'1',usn:-1,desc:''}};
+  sq.run('INSERT INTO col VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',[1,Math.floor(dayStart.getTime()/1000),Math.floor(now/1000),now,11,0,0,0,JSON.stringify(conf),JSON.stringify({[String(mid)]:model}),JSON.stringify(deckObjs),JSON.stringify(dconf),'{}']);
+  const insN=sq.prepare('INSERT INTO notes VALUES (?,?,?,?,?,?,?,?,?,?,?)');
+  const insC=sq.prepare('INSERT INTO cards VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+  let guid=1,count=0;
+  async function csum(s){
+    const buf=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(s));
+    return parseInt([...new Uint8Array(buf)].slice(0,4).map(b=>b.toString(16).padStart(2,'0')).join(''),16);
+  }
+  for(const d of decks){
+    const ddid=did+decks.indexOf(d);
+    for(const c of d.cards){
+      const nid=now+count*2,guidStr=(count+30597).toString(36)+now.toString(36).slice(-4);
+      const cs=await csum(c.front);
+      insN.run([nid,guidStr,mid,Math.floor(now/1000),-1,(c.tags||[]).join(' '),c.front+'\x1f'+c.back,c.front,cs,0,'']);
+      insC.run([nid+1,nid,ddid,0,Math.floor(now/1000),-1,0,0,Math.max(1,Math.ceil((c.due-Date.now())/86400000))||1,Math.round(c.s||0),Math.round(2500),c.reps||0,c.lapses||0,0,0,0,0,'']);
+      count++;
+    }
+  }
+  insN.free();insC.free();
+  const data=sq.export();sq.close();
+  const zip=new JSZip();
+  zip.file('collection.anki2',data);
+  zip.file('media','{}');
+  return await zip.generateAsync({type:'uint8array',compression:'DEFLATE'});
+}
+async function exportDeckApkg(id){
+  try{
+    const d=db.decks.find(x=>x.id===id);if(!d||!d.cards.length){toast(t('no_cards'));return}
+    toast(t('apkg_load'));
+    const bytes=await buildApkg([d]);
+    const blob=new Blob([bytes],{type:'application/octet-stream'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=d.name.replace(/[^\wа-яА-ЯёЁ -]/g,'').slice(0,40)+'.apkg';a.click();
+    toast(fmt(t('apkg_ok'),{n:d.cards.length}));
+  }catch(e){toast(t('apkg_err'))}
+}
 function _exportAnki(decks,fname){
   let out='#separator:tab\n#html:false\n';
   decks.forEach(d=>d.cards.forEach(c=>{
