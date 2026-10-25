@@ -549,6 +549,7 @@ nav{backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
   <div class="panel" style="display:flex;gap:9px;flex-wrap:wrap">
     <button class="ghost" onclick="exportCSV()">⬇ CSV</button>
     <button class="ghost" onclick="exportAllAnki()">⬇ Anki txt</button>
+    <button class="ghost" onclick="exportAllApkg()" data-i18n="apkg_all">🗃 Anki .apkg (все)</button>
     <button class="ghost" onclick="resetAll()" style="color:var(--bad)" data-i18n="ex_reset">🗑 Сбросить всё</button>
   </div>
 </div>
@@ -833,7 +834,7 @@ d_ret:"удержание",d_reps:"повторений",st_age:"возраст 
 weak_empty:"Проблемных карточек нет 💪",weak_hint:"💡 сократи",
 fsrs_info:"Обучено на {n} повторениях",fsrs_new:"Нет данных — стандартные параметры",
 fsrs_opt:"⚙️ Оптимизировать",opt_ok:"FSRS оптимизирован на {n} повторениях ✓",opt_little:"Мало данных — нужно ≥20 повторений",ahead_tt:"Изучить вперёд: 10 ближайших карточек",
-apkg_ok:"Экспортирован .apkg: {n} карт 🗃",
+apkg_ok:"Экспортирован .apkg: {n} карт 🗃",apkg_all:"🗃 Anki .apkg (все колоды)",
 tut2_h:"🎓 Репетитор",tut2_ph:"Спроси что угодно — я знаю твои слабые места",tut2_send:"➤",
 tut2_cards:"🧠 Карточки из ответа",tut2_need:"Сначала настрой ИИ-API в настройках (endpoint и ключ)",tut2_err:"Репетитор недоступен — проверь API",tut2_done:"Колода от репетитора добавлена 🎓",
 tut2_ctx:"Твои проблемные карточки:",tut2_ctx0:"Пока без проблемных карт — просто спроси!",
@@ -963,7 +964,7 @@ d_ret:"retention",d_reps:"reviews",st_age:"brain age",st_xp:"XP · lvl {l}",
 weak_empty:"No problem cards 💪",weak_hint:"💡 shorten",
 fsrs_info:"Trained on {n} reviews",fsrs_new:"No data — default parameters",
 fsrs_opt:"⚙️ Optimize",opt_ok:"FSRS optimized on {n} reviews ✓",opt_little:"Not enough data — need ≥20 reviews",ahead_tt:"Study ahead: next 10 cards",
-apkg_ok:".apkg exported: {n} cards 🗃",
+apkg_ok:".apkg exported: {n} cards 🗃",apkg_all:"🗃 Anki .apkg (all decks)",
 tut2_h:"🎓 Tutor",tut2_ph:"Ask anything — I know your weak spots",tut2_send:"➤",
 tut2_cards:"🧠 Cards from answer",tut2_need:"Set up AI API in settings first (endpoint and key)",tut2_err:"Tutor unavailable — check the API",tut2_done:"Tutor deck added 🎓",
 tut2_ctx:"Your problem cards:",tut2_ctx0:"No problem cards yet — just ask!",
@@ -3069,6 +3070,19 @@ async function exportDeckApkg(id){
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download=d.name.replace(/[^\wа-яА-ЯёЁ -]/g,'').slice(0,40)+'.apkg';a.click();
     toast(fmt(t('apkg_ok'),{n:d.cards.length}));
+  }catch(e){toast(t('apkg_err'))}
+}
+/* v4.20: все колоды одним .apkg (каждая — отдельная колода внутри) */
+async function exportAllApkg(){
+  const decks=db.decks.filter(d=>d.cards.length);
+  if(!decks.length){toast(t('no_cards'));return}
+  toast(t('apkg_load'));
+  try{
+    const bytes=await buildApkg(decks);
+    const blob=new Blob([bytes],{type:'application/octet-stream'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='memflow-all-'+new Date().toISOString().slice(0,10)+'.apkg';a.click();
+    toast(fmt(t('apkg_ok'),{n:decks.reduce((s,d)=>s+d.cards.length,0)}));
   }catch(e){toast(t('apkg_err'))}
 }
 function _exportAnki(decks,fname){
