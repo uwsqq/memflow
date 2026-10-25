@@ -842,6 +842,7 @@ sess_restored:"Сессия восстановлена — продолжай! �
 sess_h:"📚 История сессий",sess_acc:"Точность:",sess_empty:"Заверши первую сессию — здесь появится история",sess_info:"Сессий: {n} · карт: {tot} · средняя точность: {acc}",
 tag_h:"🏷 Теги: точность по темам",tag_empty:"Повторяй колоды с тегами — точность по темам появится здесь",
 hk_title:"⌨️ Хоткеи сессии",rate_keys:"Again · Hard · Good · Easy",
+share_sess:"Скопировать результат",cards_word:"карт",
 curve_l1:"слабая",curve_l2:"средняя",curve_l3:"зрелая",curve_yours:"твоя",curve_goal:"цель",
 swipe_hint:"свайп: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"Первый шаг",hundred:"Сотня",streak7:"Неделя огня",xp1000:"1000 XP",cram:"Зубрёжка",alltag:"Библиотекарь",duel:"Дуэлянт",turbo:"Турбо"},
@@ -972,6 +973,7 @@ sess_restored:"Session restored — keep going! 🔄",
 sess_h:"📚 Session history",sess_acc:"Accuracy:",sess_empty:"Finish your first session — history appears here",sess_info:"Sessions: {n} · cards: {tot} · avg accuracy: {acc}",
 tag_h:"🏷 Tags: accuracy by topic",tag_empty:"Review tagged decks — topic accuracy appears here",
 hk_title:"⌨️ Session hotkeys",rate_keys:"Again · Hard · Good · Easy",
+share_sess:"Copy result",cards_word:"cards",
 curve_l1:"weak",curve_l2:"medium",curve_l3:"mature",curve_yours:"yours",curve_goal:"goal",
 swipe_hint:"swipe: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"First step",hundred:"Century",streak7:"Week of fire",xp1000:"1000 XP",cram:"Crammer",alltag:"Librarian",duel:"Duelist",turbo:"Turbo"},
@@ -1936,6 +1938,13 @@ function interleaveQueue(q){
 }
 function allDueCards(){const now=Date.now(),out=[];
   db.decks.forEach(d=>d.cards.forEach(c=>{if(c.state==='new'||c.due<=now)out.push({c,d})}));return out}
+/* v4.22: скопировать результат сессии текстом */
+function shareSessionResult(){
+  const secs=Math.round((Date.now()-(session.t0||Date.now()))/1000);
+  const acc=session.answers?Math.round(session.correct/Math.max(1,session.answers)*100)+'%':'—';
+  const txt='🧠 MemFlow: '+session.done+' '+t('cards_word')+' за '+Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0')+', '+t('sess_acc')+' '+acc+' 💪';
+  navigator.clipboard.writeText(txt).then(()=>toast(t('share_copied'))).catch(()=>toast(txt));
+}
 function updateNavBadge(){const n=allDueCards().length,b=document.getElementById('navDue');b.textContent=n;b.style.display=n?'':'none';
   /* v4.9.1: бейдж due прямо в заголовке вкладки */
   document.title=(n?'('+n+') ':'')+(lang==='ru'?'MemFlow — умные карточки':'MemFlow — smart flashcards')}
@@ -2078,6 +2087,7 @@ function renderReview(){
     area.innerHTML='<div class="emptyrev"><div class="emo">'+(session.done?'🎉':'☕')+'</div>'+
       '<h2 style="color:var(--text);margin-bottom:10px">'+(session.done?t('done_h'):t('alldone_h'))+'</h2>'+
       '<p>'+(session.done?fmt(t('done_p'),{n:session.done,xp:session.done*10})+logSession():t('alldone_p'))+'</p>'+
+      (session.done?'<button class="ghost" style="margin-top:8px" onclick="shareSessionResult()">📋 '+esc(t('share_sess'))+'</button>':'')+
       '<button class="ghost" style="margin-top:18px" onclick="go(\'decks\')">'+t('to_decks')+'</button></div>';
     updateNavBadge();return;
   }
