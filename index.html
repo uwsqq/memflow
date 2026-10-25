@@ -817,6 +817,7 @@ apkg_err:"Не удалось прочитать .apkg — нужен интер
 anki_ok:"Импортировано: {n} → «{d}»",exp_ok:"Экспортировано 👍",
 confirm_all:"Всё будет удалено.",age_saved:"Сохранено",cram_on:"⚡ Зубрёжка: прогресс не меняется",
 undo_ok:"↩️ Отменено",tag_filter:"Все теги",lib_added:"«{d}» добавлена 📚",lib_have:"✓ Установлена",
+lib_none:"Ничего не найдено",lib_none2:"Очисти поиск или выбери «Все классы» в настройках",
 share_copied:"Ссылка скопирована!",share_imported:"Колода из ссылки 🔗",
 ti_ok:"Создано {n} карточек",ti_empty:"Текст слишком короткий",
 bk_ok:"Бэкап скачан 💾",bk_loaded:"Восстановлено ✅",bk_bad:"Некорректный бэкап",
@@ -946,6 +947,7 @@ apkg_err:"Could not read .apkg — internet needed for the library. Use .txt.",
 anki_ok:"Imported: {n} → “{d}”",exp_ok:"Exported 👍",
 confirm_all:"Everything will be deleted.",age_saved:"Saved",cram_on:"⚡ Cram: progress untouched",
 undo_ok:"↩️ Undone",tag_filter:"All tags",lib_added:"“{d}” added 📚",lib_have:"✓ Installed",
+lib_none:"Nothing found",lib_none2:"Clear the search or pick “All grades” in settings",
 share_copied:"Link copied!",share_imported:"Deck from link 🔗",
 ti_ok:"Created {n} cards",ti_empty:"Text too short",
 bk_ok:"Backup downloaded 💾",bk_loaded:"Restored ✅",bk_bad:"Invalid backup",
@@ -1720,6 +1722,13 @@ function renderDecks(){
       '<button class="iconbtn" onclick="askDeleteDeck('+d.id+')">🗑</button></div>';
     g.appendChild(el);
   });
+  /* v4.19: пустая библиотека — подсказка */
+  if(!g.querySelector('.libcard')){
+    const tip=document.createElement('div');
+    tip.style.cssText='grid-column:1/-1;text-align:center;color:var(--muted);padding:34px 10px;font-size:14px';
+    tip.innerHTML='🔍 '+esc(t('lib_none'))+'<br><span style="font-size:12.5px">'+esc(t('lib_none2'))+'</span>';
+    g.appendChild(tip);
+  }
   const add=document.createElement('button');add.className='adddeck';
   add.innerHTML='<span style="font-size:28px">＋</span> '+esc(t('dm_name'));
   add.onclick=()=>{document.getElementById('fDeckName').value='';document.getElementById('fDeckDesc').value='';openModal('deckModal')};
@@ -3019,22 +3028,32 @@ CREATE TABLE graves (usn integer not null, oid integer not null, type integer no
   sq.run('INSERT INTO col VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',[1,Math.floor(dayStart.getTime()/1000),Math.floor(now/1000),now,11,0,0,0,JSON.stringify(conf),JSON.stringify({[String(mid)]:model}),JSON.stringify(deckObjs),JSON.stringify(dconf),'{}']);
   const insN=sq.prepare('INSERT INTO notes VALUES (?,?,?,?,?,?,?,?,?,?,?)');
   const insC=sq.prepare('INSERT INTO cards VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+  const insR=sq.prepare('INSERT INTO revlog VALUES (?,?,?,?,?,?,?,?,?)');
   let guid=1,count=0;
   async function csum(s){
     const buf=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(s));
     return parseInt([...new Uint8Array(buf)].slice(0,4).map(b=>b.toString(16).padStart(2,'0')).join(''),16);
   }
+  const crt=dayStart.getTime();
   for(const d of decks){
     const ddid=did+decks.indexOf(d);
     for(const c of d.cards){
       const nid=now+count*2,guidStr=(count+30597).toString(36)+now.toString(36).slice(-4);
       const cs=await csum(c.front);
       insN.run([nid,guidStr,mid,Math.floor(now/1000),-1,(c.tags||[]).join(' '),c.front+'\x1f'+c.back,c.front,cs,0,'']);
-      insC.run([nid+1,nid,ddid,0,Math.floor(now/1000),-1,0,0,Math.max(1,Math.ceil((c.due-Date.now())/86400000))||1,Math.round(c.s||0),Math.round(2500),c.reps||0,c.lapses||0,0,0,0,0,'']);
+      /* v4.19: настоящие расписания — due в днях от crt, ivl из стабильности, type/queue по состоянию */
+      const isRev=c.state==='review'||c.state==='lapsed';
+      const ivl=Math.max(1,Math.round(c.s||0));
+      const dueDays=isRev?Math.max(0,Math.round((c.due-crt)/86400000)):(c.state==='learning'?Math.max(1,Math.round((c.due-now)/60000)):0);
+      insC.run([nid+1,nid,ddid,0,Math.floor(now/1000),-1,isRev?2:0,isRev?2:(c.state==='learning'?1:0),dueDays,ivl,Math.round(2500),c.reps||0,c.lapses||0,0,0,0,0,'']);
+      /* v4.19: revlog из истории карты (g>1→ease g+1? Anki: Again=1, Hard=2, Good=3, Easy=4) */
+      (c.hist||[]).forEach((h,i)=>{
+        insR.run([h.t||now+i,nid+1,-1,h.g,Math.round(h.iv||1),i?Math.round(c.hist[i-1].iv||1):0,2500,25000,h.g===1?0:1]);
+      });
       count++;
     }
   }
-  insN.free();insC.free();
+  insN.free();insC.free();insR.free();
   const data=sq.export();sq.close();
   const zip=new JSZip();
   zip.file('collection.anki2',data);
