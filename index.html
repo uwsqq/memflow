@@ -304,6 +304,9 @@ nav{backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
 .tmsg.user{align-self:flex-end;background:var(--grad);color:#fff;border-bottom-right-radius:4px}
 .tmsg.ai{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:4px}
 .tmsg.ai.think{color:var(--muted);font-style:italic}
+/* v4.24: режим «на слух» — текст вопроса размыт до переворота */
+body.listen .flashcard:not(.flipped) .q{filter:blur(9px);user-select:none}
+body.listen .flashcard:not(.flipped) .hint{opacity:0}
 .focusmode nav,.focusmode .tabbar{display:none!important}
 .focusmode .revstats,.focusmode .pomodoro{opacity:.45}
 .focusmode #revArea{transform:scale(1.03)}
@@ -437,6 +440,7 @@ nav{backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
         <div class="pomodoro"><span id="pomoTime">25:00</span><button onclick="pomoToggle()" id="pomoBtn">▶</button></div>
         <button class="navbtn small" id="turboNav" onclick="toggleTurbo()" title="Turbo">⚡</button>
         <button class="navbtn small" id="editCardBtn" onclick="quickEditCard()" data-i18n-title="qe_title" title="✏️ (E)">✏️</button>
+        <button class="navbtn small" id="listenNav" onclick="toggleListen()" title="🎧" data-i18n-title="listen_on">🎧</button>
         <button class="navbtn small" id="undoBtn" style="display:none" onclick="undoReview()" title="Undo (Z)">↩️</button>
       </div>
     </div>
@@ -843,6 +847,7 @@ sess_h:"📚 История сессий",sess_acc:"Точность:",sess_empt
 tag_h:"🏷 Теги: точность по темам",tag_empty:"Повторяй колоды с тегами — точность по темам появится здесь",
 hk_title:"⌨️ Хоткеи сессии",rate_keys:"Again · Hard · Good · Easy",
 share_sess:"Скопировать результат",cards_word:"карт",
+listen_on:"🎧 На слух: текст скрыт, всё произносится",listen_off:"На слух выключен",
 curve_l1:"слабая",curve_l2:"средняя",curve_l3:"зрелая",curve_yours:"твоя",curve_goal:"цель",
 swipe_hint:"свайп: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"Первый шаг",hundred:"Сотня",streak7:"Неделя огня",xp1000:"1000 XP",cram:"Зубрёжка",alltag:"Библиотекарь",duel:"Дуэлянт",turbo:"Турбо"},
@@ -974,6 +979,7 @@ sess_h:"📚 Session history",sess_acc:"Accuracy:",sess_empty:"Finish your first
 tag_h:"🏷 Tags: accuracy by topic",tag_empty:"Review tagged decks — topic accuracy appears here",
 hk_title:"⌨️ Session hotkeys",rate_keys:"Again · Hard · Good · Easy",
 share_sess:"Copy result",cards_word:"cards",
+listen_on:"🎧 Listen mode: text hidden, spoken aloud",listen_off:"Listen mode off",
 curve_l1:"weak",curve_l2:"medium",curve_l3:"mature",curve_yours:"yours",curve_goal:"goal",
 swipe_hint:"swipe: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"First step",hundred:"Century",streak7:"Week of fire",xp1000:"1000 XP",cram:"Crammer",alltag:"Librarian",duel:"Duelist",turbo:"Turbo"},
@@ -2148,9 +2154,27 @@ function speak(){
     speechSynthesis.cancel();speechSynthesis.speak(u);
   }catch(e){}
 }
+/* v4.24: режим «на слух» — текст размыт, фронт и бек произносятся вслух */
+let listenMode=false;
+function toggleListen(){
+  listenMode=!listenMode;
+  document.body.classList.toggle('listen',listenMode);
+  const b=document.getElementById('listenNav');if(b)b.style.color=listenMode?'var(--acc2)':'';
+  toast(t(listenMode?'listen_on':'listen_off'));
+  renderReview();
+  if(listenMode&&queue.length)speak();
+}
 function flip(){
   const fc=document.getElementById('fc');if(!fc)return;
   fc.classList.add('flipped');
+  /* v4.24: в режиме «на слух» озвучиваем бек при перевороте */
+  if(listenMode&&queue[0]){
+    const back=cardFaces(queue[0].c).b.replace(/\{\{|\}\}/g,'');
+    try{const u=new SpeechSynthesisUtterance(back);
+      u.lang=/[а-яё]/i.test(back)?'ru-RU':'en-US';
+      speechSynthesis.cancel();speechSynthesis.speak(u);
+    }catch(e){}
+  }
   examLastOk=examLastOk&&true;
   if(examLastOk===undefined)examLastOk=false;
   const sb=document.getElementById('showBtn');if(sb)sb.style.display='none';
