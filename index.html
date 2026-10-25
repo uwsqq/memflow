@@ -1640,12 +1640,16 @@ function renderWeekWidget(){
   const max=Math.max(goal,...days.map(x=>x.count),1);
   const total=days.reduce((s,x)=>s+x.count,0);
   /* v4.8: виджет рисуем и на главной, и на экране статистики */
+  /* v4.26: клик по бару недели — детали дня */
   [['weekRow','weekTotal'],['weekRowStats','weekTotalStats']].forEach(([rid,tid])=>{
     const row=document.getElementById(rid);if(!row)return;
     row.innerHTML=days.map((x,i)=>{
       const h=Math.round(x.count/max*100);
       const lbl=x.d.toLocaleDateString(loc,{weekday:'narrow'});
-      return '<div class="wday"><span class="wval">'+(x.count||'')+'</span>'+
+      const dayLogs=db.log.filter(l=>l.t>=x.d.getTime()&&l.t<x.d.getTime()+86400000);
+      const dayAcc=dayLogs.length?Math.round(dayLogs.filter(l=>l.g>1).length/dayLogs.length*100)+'%':'—';
+      return '<div class="wday" title="'+x.d.toLocaleDateString(loc)+' · '+x.count+' · '+dayAcc+'" onclick="toast(this.title)" style="cursor:default">'+
+        '<span class="wval">'+(x.count||'')+'</span>'+
         '<div class="wbar'+(x.count?'':' off')+'" style="height:'+Math.max(h,3)+'%"></div>'+
         '<span class="wlbl">'+lbl+(i===6?' ·':'')+'</span></div>';
     }).join('');
