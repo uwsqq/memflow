@@ -491,6 +491,7 @@ body.listen .flashcard:not(.flipped) .hint{opacity:0}
   <div class="panel"><h3 data-i18n="fc_h3">📅 Прогноз нагрузки (7 дней)</h3><canvas id="fcCanvas" height="170"></canvas></div>
   <div class="panel"><h3 data-i18n="curve_h3">📉 Кривая силы памяти (твоя)</h3><canvas id="curveCanvas" height="220"></canvas><p id="curveHint" style="color:var(--muted);font-size:12px;margin-top:8px"></p></div>
   <div class="panel"><h3 data-i18n="sess_h">📚 История сессий</h3><div id="sessBars" style="display:flex;gap:5px;align-items:flex-end;height:90px;margin-top:10px"></div><div id="sessInfo" style="color:var(--muted);font-size:12.5px;margin-top:8px"></div></div>
+  <div class="panel"><h3 data-i18n="hrs_h">⏰ Твои лучшие часы</h3><div id="hourBars" style="display:flex;gap:2px;align-items:flex-end;height:80px;margin-top:10px"></div><div id="hourInfo" style="color:var(--muted);font-size:12.5px;margin-top:8px"></div></div>
   <div class="panel"><h3 data-i18n="tag_h">🏷 Теги: точность по темам</h3><div id="tagReport"></div></div>
   <div class="panel"><h3 data-i18n="games_rec">🎮 Игровые рекорды</h3><div id="gameRecs" style="display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px"></div></div>
   <div class="panel"><h3 data-i18n="weak_h3">⚠️ Слабые места</h3><div id="weakList"></div></div>
@@ -845,6 +846,7 @@ tut2_ctx:"Твои проблемные карточки:",tut2_ctx0:"Пока �
 sess_restored:"Сессия восстановлена — продолжай! 🔄",
 sess_h:"📚 История сессий",sess_acc:"Точность:",sess_empty:"Заверши первую сессию — здесь появится история",sess_info:"Сессий: {n} · карт: {tot} · средняя точность: {acc}",
 tag_h:"🏷 Теги: точность по темам",tag_empty:"Повторяй колоды с тегами — точность по темам появится здесь",
+hrs_h:"⏰ Твои лучшие часы",hrs_info:"Повторений учтено: {n}. Зелёные часы — твоя сильная пора",hrs_empty:"Пока нет данных по часам",
 hk_title:"⌨️ Хоткеи сессии",rate_keys:"Again · Hard · Good · Easy",
 share_sess:"Скопировать результат",cards_word:"карт",
 listen_on:"🎧 На слух: текст скрыт, всё произносится",listen_off:"На слух выключен",
@@ -977,6 +979,7 @@ tut2_ctx:"Your problem cards:",tut2_ctx0:"No problem cards yet — just ask!",
 sess_restored:"Session restored — keep going! 🔄",
 sess_h:"📚 Session history",sess_acc:"Accuracy:",sess_empty:"Finish your first session — history appears here",sess_info:"Sessions: {n} · cards: {tot} · avg accuracy: {acc}",
 tag_h:"🏷 Tags: accuracy by topic",tag_empty:"Review tagged decks — topic accuracy appears here",
+hrs_h:"⏰ Your best hours",hrs_info:"Reviews counted: {n}. Green hours are your peak time",hrs_empty:"No hour data yet",
 hk_title:"⌨️ Session hotkeys",rate_keys:"Again · Hard · Good · Easy",
 share_sess:"Copy result",cards_word:"cards",
 listen_on:"🎧 Listen mode: text hidden, spoken aloud",listen_off:"Listen mode off",
@@ -2397,9 +2400,30 @@ function renderTagReport(){
       '<span style="font-size:11.5px;color:var(--muted);width:40px;text-align:right">'+n2[1]+'×</span></div>';
   }).join('');
 }
+/* v4.25: хроно-статистика — точность и объём по часам дня */
+function renderHourStats(){
+  const el=document.getElementById('hourBars');if(!el)return;
+  const agg=Array.from({length:24},()=>[0,0]);
+  (db.log||[]).forEach(l=>{
+    const h=new Date(l.t).getHours();
+    agg[h][0]+=l.g>1?1:0;agg[h][1]++;
+  });
+  const max=Math.max(...agg.map(a=>a[1]),1);
+  const nowH=new Date().getHours();
+  el.innerHTML=agg.map((a,h)=>{
+    const hpx=a[1]?Math.max(6,Math.round(a[1]/max*100)):2;
+    const acc=a[1]?Math.round(a[0]/a[1]*100):null;
+    const col=acc===null?'var(--line)':acc>=85?'var(--good)':acc>=65?'var(--hard)':'var(--bad)';
+    return '<div title="'+h+':00 — '+a[1]+' '+t('d_reps')+(acc!==null?' · '+acc+'%':'')+'" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;cursor:default;'+(h===nowH?'outline:1px solid var(--acc2);outline-offset:2px;border-radius:4px':'')+'">'+
+      '<i style="display:block;width:100%;height:'+hpx+'%;background:'+col+';border-radius:4px 4px 2px 2px;min-height:3px"></i>'+
+      '<span style="font-size:8.5px;color:var(--muted)">'+(h%3===0?h:'')+'</span></div>';
+  }).join('');
+  const tot=agg.reduce((s,a)=>s+a[1],0);
+  document.getElementById('hourInfo').textContent=tot?t('hrs_info').replace('{n}',tot):t('hrs_empty');
+}
 function renderStatsGridOnly(){
   renderBrainAge();renderAch();
-  renderSessionBars();renderTagReport();
+  renderSessionBars();renderTagReport();renderHourStats();
   /* v4.9.1: панель игровых рекордов */
   const gr=document.getElementById('gameRecs');
   if(gr){
