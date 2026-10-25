@@ -1068,7 +1068,10 @@ window.addEventListener('beforeunload',persistNow);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)persistNow()});
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function haptic(ms){if(db.settings.haptic&&navigator.vibrate)try{navigator.vibrate(ms)}catch(e){}}
-function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(el._h);el._h=setTimeout(()=>el.classList.remove('show'),2400)}
+function toast(m,action){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');
+  /* v4.27: кликабельный тост — действие (например, Undo удаления) */
+  el.style.cursor=action?'pointer':'default';el.onclick=action||null;
+  clearTimeout(el._h);el._h=setTimeout(()=>el.classList.remove('show'),action?6000:2400)}
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 function fmtDays(d){if(d<1/24)return t('now');if(d<1)return Math.round(d*24)+' '+t('h');if(d<31)return Math.round(d)+' '+t('d');if(d<365)return Math.round(d/30)+' '+t('mo');return(d/365).toFixed(1)+' '+t('y')}
@@ -1879,8 +1882,16 @@ function viewCards(deckId){
 }
 window.debCardList=debounce((id,v)=>{cardFilter.q=v;viewCards(id)},160);
 function askDeleteCard(deckId,cardId){document.getElementById('confirmYes').onclick=()=>{
-  const d=db.decks.find(x=>x.id===deckId);d.cards=d.cards.filter(c=>c.id!==cardId);
-  persist();closeModal('confirmModal');viewCards(deckId);toast(t('card_del'))};openModal('confirmModal')}
+  const d=db.decks.find(x=>x.id===deckId);
+  /* v4.27: undo удаления карты через кликабельный тост */
+  const idx=d.cards.findIndex(c=>c.id===cardId);
+  const removed=d.cards[idx];
+  d.cards=d.cards.filter(c=>c.id!==cardId);
+  persist();closeModal('confirmModal');viewCards(deckId);
+  toast(t('card_del')+' · '+t('trash_restore'),()=>{
+    d.cards.splice(Math.min(idx,d.cards.length),0,removed);
+    persist();viewCards(deckId);toast(t('undo_ok'));
+  })};openModal('confirmModal')}
 
 /* ============ шеринг ============ */
 function shareDeck(id){const d=db.decks.find(x=>x.id===id);
