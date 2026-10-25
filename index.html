@@ -551,6 +551,19 @@ nav{backdrop-filter:blur(14px);-moz-backdrop-filter:blur(14px)}
   </div>
 </div>
 
+<!-- v4.13: MIXED EXAM DECK PICKER -->
+<div class="modal-bg" id="mixedModal">
+  <div class="modal">
+    <h2 data-i18n="mixed_btn">🎓 Сводный вариант</h2>
+    <p style="color:var(--muted);font-size:13px" data-i18n="mixed_pick">Выбери колоды — возьму 10 случайных карт из них</p>
+    <div id="mixedList" style="max-height:40vh;overflow-y:auto;margin:10px 0"></div>
+    <div class="btnrow">
+      <button class="primary" style="margin-top:0" onclick="startMixedFromPicker()" data-i18n="mixed_start">Начать вариант</button>
+      <button class="ghost" onclick="closeModal('mixedModal')" data-i18n="btn_cancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
 <!-- AI MODAL -->
 <div class="modal-bg" id="aiModal">
   <div class="modal">
@@ -762,6 +775,7 @@ tr_ok:"Переведено: {n} → «{d}»",tr_gen:"Перевожу чере�
 snd_on:"🔊 Звук вкл",snd_off:"🔊 Звук выкл",
 exam_btn:"📝 Вариант",ex_h:"📝 Вариант",ex_score:"Результат: {n} из {m}",ex_again:"🎲 Ещё вариант",
 mixed_btn:"🎓 Сводный вариант",mixed_empty:"Нужно хотя бы 10 карточек в колодах",
+mixed_pick:"Выбери колоды — возьму 10 случайных карт из них",mixed_start:"Начать вариант",
 st_png:"⬇ Экспорт PNG",png_ok:"PNG сохранён 🖼",
 ex_g5:"Отлично — оценка 5 🏆",ex_g4:"Хорошо — оценка 4 👍",ex_g3:"Удовлетворительно — оценка 3",ex_g2:"Нужно повторить — оценка 2 💪",
 anki_sched:"Перенесено расписаний: {n}",
@@ -886,6 +900,7 @@ tr_ok:"Translated: {n} → “{d}”",tr_gen:"Translating via AI…",
 snd_on:"🔊 Sound on",snd_off:"🔊 Sound off",
 exam_btn:"📝 Mock exam",ex_h:"📝 Mock exam",ex_score:"Score: {n} of {m}",ex_again:"🎲 Another attempt",
 mixed_btn:"🎓 Mixed exam",mixed_empty:"Need at least 10 cards across decks",
+mixed_pick:"Pick decks — I'll take 10 random cards from them",mixed_start:"Start exam",
 st_png:"⬇ Export PNG",png_ok:"PNG saved 🖼",
 ex_g5:"Excellent — grade 5 🏆",ex_g4:"Good — grade 4 👍",ex_g3:"Satisfactory — grade 3",ex_g2:"Needs review — grade 2 💪",
 anki_sched:"Schedules migrated: {n}",
@@ -1910,10 +1925,20 @@ function startExam(deckId){
   session.examTotal=queue.length;session.examCorrect=0;session.examDeck=deckId;
   beginSession();
 }
-/* сводный вариант: карточки из всех колод вперемешку */
+/* сводный вариант: карточки из выбранных колод вперемешку (v4.13: чекбоксы) */
 function startMixedExam(){
+  if(db.decks.filter(d=>d.cards.length).length<=1){toast(t('mixed_empty'));return}
+  document.getElementById('mixedList').innerHTML=db.decks.filter(d=>d.cards.length).map((d,i)=>
+    '<label class="settingsrow" style="cursor:pointer"><div><div class="sl">'+esc(d.name)+' <span style="color:var(--muted)">('+d.cards.length+')</span></div></div>'+
+    '<input type="checkbox" id="mixChk'+i+'" checked></label>').join('');
+  openModal('mixedModal');
+}
+function startMixedFromPicker(){
+  const picked=[];
+  db.decks.filter(d=>d.cards.length).forEach((d,i)=>{const ch=document.getElementById('mixChk'+i);if(ch&&ch.checked)picked.push(d)});
+  closeModal('mixedModal');
   const pool=[];
-  db.decks.forEach(d=>d.cards.forEach(c=>pool.push({c,d})));
+  picked.forEach(d=>d.cards.forEach(c=>pool.push({c,d})));
   if(pool.length<10){toast(t('mixed_empty'));return}
   go('review');examMode=true;cramMode=true;
   applyModeClasses();modeFlash();
