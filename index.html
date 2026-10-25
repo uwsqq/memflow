@@ -825,6 +825,7 @@ apkg_ok:"Экспортирован .apkg: {n} карт 🗃",
 tut2_h:"🎓 Репетитор",tut2_ph:"Спроси что угодно — я знаю твои слабые места",tut2_send:"➤",
 tut2_cards:"🧠 Карточки из ответа",tut2_need:"Сначала настрой ИИ-API в настройках (endpoint и ключ)",tut2_err:"Репетитор недоступен — проверь API",tut2_done:"Колода от репетитора добавлена 🎓",
 tut2_ctx:"Твои проблемные карточки:",tut2_ctx0:"Пока без проблемных карт — просто спроси!",
+sess_restored:"Сессия восстановлена — продолжай! 🔄",
 curve_l1:"слабая",curve_l2:"средняя",curve_l3:"зрелая",curve_yours:"твоя",curve_goal:"цель",
 swipe_hint:"свайп: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"Первый шаг",hundred:"Сотня",streak7:"Неделя огня",xp1000:"1000 XP",cram:"Зубрёжка",alltag:"Библиотекарь",duel:"Дуэлянт",turbo:"Турбо"},
@@ -950,6 +951,7 @@ apkg_ok:".apkg exported: {n} cards 🗃",
 tut2_h:"🎓 Tutor",tut2_ph:"Ask anything — I know your weak spots",tut2_send:"➤",
 tut2_cards:"🧠 Cards from answer",tut2_need:"Set up AI API in settings first (endpoint and key)",tut2_err:"Tutor unavailable — check the API",tut2_done:"Tutor deck added 🎓",
 tut2_ctx:"Your problem cards:",tut2_ctx0:"No problem cards yet — just ask!",
+sess_restored:"Session restored — keep going! 🔄",
 curve_l1:"weak",curve_l2:"medium",curve_l3:"mature",curve_yours:"yours",curve_goal:"goal",
 swipe_hint:"swipe: → Good · ← Again · ↑ Easy · ↓ Hard",
 ach_names:{first:"First step",hundred:"Century",streak7:"Week of fire",xp1000:"1000 XP",cram:"Crammer",alltag:"Librarian",duel:"Duelist",turbo:"Turbo"},
@@ -1967,6 +1969,35 @@ function beginSession(){
   session={done:0,streak:0,combo:0};
   if(examMode){session.examTotal=exT;session.examCorrect=exC}
   lastReview=null;hintIdx=0;renderSleepNote();renderReview();updateNavBadge();
+  saveSession();
+}
+/* v4.14: автосохранение сессии — после перезагрузки страницы можно продолжить */
+function saveSession(){
+  try{
+    if(examMode||!queue.length){localStorage.removeItem('mf-session');return}
+    localStorage.setItem('mf-session',JSON.stringify({
+      q:queue.map(it=>[it.d.id,it.c.id]),done:session.done,streak:session.streak
+    }));
+  }catch(e){}
+}
+function restoreSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem('mf-session')||'null');
+    if(!s||!s.q||!s.q.length)return false;
+    queue=[];
+    s.q.forEach(([did,cid])=>{
+      const d=db.decks.find(x=>x.id===did);
+      const c=d&&d.cards.find(x=>x.id===cid);
+      if(c)queue.push({c,d});
+    });
+    if(!queue.length)return false;
+    go('review');cramMode=false;turboMode=false;
+    applyModeClasses();
+    session={done:s.done||0,streak:s.streak||0,combo:0};
+    lastReview=null;hintIdx=0;renderSleepNote();renderReview();updateNavBadge();
+    toast(t('sess_restored'));
+    return true;
+  }catch(e){return false}
 }
 function renderSleepNote(){
   const el=document.getElementById('sleepNote');
@@ -2133,9 +2164,9 @@ function rate(g){
   persist();
   session.done++;session.streak=g===1?0:session.streak+1;
   haptic(g===1?60:15);
-  if(g===1&&!cramMode){setTimeout(()=>{queue.push(item);renderReview()},60000);toast(t('again_again'))}
+  if(g===1&&!cramMode){setTimeout(()=>{queue.push(item);renderReview();saveSession()},60000);toast(t('again_again'))}
   else if(g===1&&cramMode)queue.push(item);
-  renderReview();updateNavBadge();renderXP();
+  renderReview();updateNavBadge();renderXP();saveSession();
   };
   const fc=document.getElementById('fc');
   if(fc&&db.settings.anim&&!RM&&!RM){
@@ -2152,7 +2183,7 @@ function undoReview(){
   queue.unshift({c:card,d:db.decks.find(x=>x.cards.includes(card))||db.decks[0]});
   session.done=Math.max(0,session.done-1);
   db.gamif.xp=Math.max(0,db.gamif.xp-10);
-  persist();lastReview=null;renderReview();renderXP();toast(t('undo_ok'));
+  persist();lastReview=null;renderReview();renderXP();updateNavBadge();saveSession();toast(t('undo_ok'));
 }
 document.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;
@@ -3099,7 +3130,9 @@ document.getElementById('ageRange').addEventListener('change',()=>toast(t('age_s
 applyTheme();renderBrainAge();renderXP();updateNavBadge();renderRecs();startReminders();
 if(db.settings.reverse)document.getElementById('revBtn').style.color='var(--acc2)';
 if(db.settings.turbo)document.getElementById('turboNav').style.color='var(--acc2)';
-importFromHash();
+if(!restoreSession()){
+  importFromHash();
+}
 </script>
 </body>
 </html>
