@@ -3212,12 +3212,28 @@ async function tutorCards(){
 
 /* ============ PWA ============ */
 (function(){
+  /* v4.23: настоящие PNG-иконки (генерируются в canvas) — приятнее при установке */
+  function makeIcon(size){
+    const cv=document.createElement('canvas');cv.width=cv.height=size;
+    const x=cv.getContext('2d');
+    const g=x.createLinearGradient(0,0,size,size);
+    g.addColorStop(0,'#6c5ce7');g.addColorStop(1,'#00d2c6');
+    x.fillStyle=g;
+    const r=size*.22;
+    x.beginPath();x.moveTo(r,0);x.arcTo(size,0,size,size,r);x.arcTo(size,size,0,size,r);x.arcTo(0,size,0,0,r);x.arcTo(0,0,size,0,r);x.fill();
+    x.font=Math.round(size*.58)+'px serif';
+    x.textAlign='center';x.textBaseline='middle';
+    x.fillText('🧠',size/2,size/2+size*.03);
+    return cv.toDataURL('image/png');
+  }
   const m={name:'MemFlow',short_name:'MemFlow',start_url:'.',display:'standalone',
     background_color:'#0b0e17',theme_color:'#6c5ce7',lang:lang,
-    icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>",sizes:'512x512',type:'image/svg+xml'}]};
+    icons:[{src:makeIcon(192),sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:makeIcon(512),sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
   const link=document.createElement('link');link.rel='manifest';
   link.href='data:application/json,'+encodeURIComponent(JSON.stringify(m));
   document.head.appendChild(link);
+  const favicon=document.createElement('link');favicon.rel='icon';
+  favicon.href=makeIcon(64);document.head.appendChild(favicon);
   if('serviceWorker' in navigator&&location.protocol==='https:'){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
